@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ExamAce — AI-graded CBSE practice</title>
+<meta name="description" content="AI-graded CBSE practice for Classes 8-12, from RK Innovations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo: #4F46E5;
+    --indigo-ink: #3730A3;
+    --violet: #6D28D9;
+    --gold: #FBBF24;
+    --gold-dark: #C26C08;
+    --ink-red: #C0392B;
+
+    --bg: #F3F1EC;
+    --bg-alt: #EAE7DF;
+    --surface: #FFFFFF;
+    --paper: #FBF8F0;
+    --paper-line: #E4D9C4;
+    --text: #1F1B3A;
+    --text-soft: #5B577A;
+    --text-faint: #8B87A6;
+    --border: #E2DFD4;
+    --border-strong: #CFC9B8;
+    --chip-bg: #EEECE3;
+    --shadow: 220 25% 20%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14121F;
+      --bg-alt: #1A1729;
+      --surface: #1E1A2E;
+      --paper: #FBF8F0;
+      --paper-line: #E4D9C4;
+      --text: #EFEDFA;
+      --text-soft: #B6B1D6;
+      --text-faint: #8983AD;
+      --border: #322C49;
+      --border-strong: #433C63;
+      --chip-bg: #251F38;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14121F;
+    --bg-alt: #1A1729;
+    --surface: #1E1A2E;
+    --paper: #FBF8F0;
+    --paper-line: #E4D9C4;
+    --text: #EFEDFA;
+    --text-soft: #B6B1D6;
+    --text-faint: #8983AD;
+    --border: #322C49;
+    --border-strong: #433C63;
+    --chip-bg: #251F38;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display {
+    font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    color: var(--text);
+    text-wrap: balance;
+    margin: 0;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; }
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+  section { padding: 96px 0; }
+  @media (max-width: 720px) { section { padding: 64px 0; } }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--indigo-ink);
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eyebrow { color: #B7B0FF; } }
+  :root[data-theme="dark"] .eyebrow { color: #B7B0FF; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .brand-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; color: var(--text); }
+  .brand-super { font-size: 10px; color: var(--text-faint); font-weight: 600; letter-spacing: 0.03em; white-space: nowrap; }
+  .nav-links { display: flex; align-items: center; gap: 28px; font-size: 14px; font-weight: 600; }
+  .nav-links a { text-decoration: none; color: var(--text-soft); transition: color .15s; }
+  .nav-links a:hover, .nav-links a:focus-visible { color: var(--indigo-ink); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .nav-links a:hover { color: #C9C3FF; } }
+  :root[data-theme="dark"] .nav-links a:hover { color: #C9C3FF; }
+  .nav-links .pill { display: inline-block; }
+  @media (max-width: 780px) { .nav-links a.hide-sm { display: none; } }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pill-primary {
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    color: white;
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--indigo) 70%, transparent);
+  }
+  .pill-ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .pill-soft {
+    background: var(--chip-bg);
+    color: var(--text-soft);
+    font-size: 13px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 72px 0 40px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+
+  .hero h1 { font-size: clamp(34px, 4.4vw, 52px); line-height: 1.08; font-weight: 700; letter-spacing: -0.01em; }
+  .hero-accent { color: var(--indigo-ink); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-accent { color: #B7B0FF; } }
+  :root[data-theme="dark"] .hero-accent { color: #B7B0FF; }
+
+  .hero p.lede {
+    margin-top: 20px;
+    font-size: 17.5px;
+    color: var(--text-soft);
+    max-width: 46ch;
+  }
+  .hero-ctas { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; align-items: center; }
+  .hero-note { margin-top: 14px; font-size: 13px; color: var(--text-faint); }
+
+  /* ---------- Marked answer sheet ---------- */
+  .sheet-wrap { position: relative; }
+  .sheet {
+    position: relative;
+    background:
+      repeating-linear-gradient(var(--paper), var(--paper) 27px, var(--paper-line) 28px);
+    background-color: var(--paper);
+    border-radius: 14px;
+    padding: 30px 26px 26px 46px;
+    box-shadow: 0 30px 60px -25px hsl(var(--shadow) / 0.45), 0 2px 0 var(--border-strong);
+    transform: rotate(-1.2deg);
+    color: #2B2640;
+  }
+  .sheet::before {
+    content: "";
+    position: absolute;
+    left: 30px; top: 0; bottom: 0;
+    width: 2px;
+    background: color-mix(in srgb, var(--ink-red) 55%, transparent);
+  }
+  .sheet-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #7A6F52;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .sheet-q {
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #2B2640;
+    margin-bottom: 10px;
+  }
+  .sheet-answer {
+    font-family: 'Kalam', cursive;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #33304a;
+    max-width: 92%;
+  }
+  .mark-tick {
+    color: var(--ink-red);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .score-circle {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 58px;
+    height: 58px;
+    border: 3px solid var(--ink-red);
+    border-radius: 55% 48% 58% 45% / 50% 55% 45% 50%;
+    transform: rotate(6deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Kalam', cursive;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink-red);
+    background: color-mix(in srgb, var(--ink-red) 6%, transparent);
+  }
+  .sticky {
+    margin-top: 20px;
+    margin-left: 6%;
+    background: #FFF3C4;
+    color: #4A3B0A;
+    border-radius: 3px 12px 12px 12px;
+    padding: 14px 16px;
+    max-width: 88%;
+    font-size: 13.5px;
+    box-shadow: 0 10px 20px -12px rgba(0,0,0,0.35);
+    transform: rotate(1deg);
+  }
+  .sticky b { font-family: 'Poppins', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; color: #8A6A00; }
+  .mastery-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1F7A4D;
+    background: #DFF3E7;
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+  .mastery-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #1F7A4D; }
+
+  .floaty {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: 0 14px 26px -14px hsl(var(--shadow) / 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .floaty-1 { top: -18px; left: -18px; transform: rotate(-4deg); color: var(--gold-dark); }
+  .floaty-2 { bottom: -16px; right: 12px; transform: rotate(3deg); color: var(--indigo-ink); }
+  @media (max-width: 900px) { .floaty { display: none; } }
+
+  /* ---------- Stat band ---------- */
+  .stats {
+    padding: 46px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  @media (max-width: 780px) { .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
+  .stat { text-align: left; padding: 0 20px; border-left: 2px solid var(--border-strong); }
+  .stat:first-child { border-left: none; padding-left: 0; }
+  @media (max-width: 780px) { .stat { border-left: none; padding: 0; } }
+  .stat-num {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 34px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .stat-label { font-size: 13.5px; color: var(--text-soft); margin-top: 4px; }
+
+  /* ---------- Section headers ---------- */
+  .section-head { max-width: 620px; margin-bottom: 48px; }
+  .section-head h2 { font-size: clamp(26px, 3vw, 36px); margin-top: 10px; font-weight: 700; }
+  .section-head p { color: var(--text-soft); margin-top: 12px; font-size: 16px; }
+
+  /* ---------- How it works ---------- */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; counter-reset: step; }
+  @media (max-width: 820px) { .steps { grid-template-columns: 1fr; } }
+  .step { position: relative; padding-top: 6px; }
+  .step-num {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--surface);
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .step p { color: var(--text-soft); font-size: 14.5px; margin: 0; }
+
+  /* ---------- Date sheet ---------- */
+  .datesheet {
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .datesheet-head {
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    color: white;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .datesheet-head span.sub { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 12px; opacity: 0.85; letter-spacing: normal; }
+  .ds-row {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    border-top: 1px solid var(--border);
+  }
+  .ds-row:first-of-type { border-top: none; }
+  @media (max-width: 620px) { .ds-row { grid-template-columns: 72px 1fr; } }
+  .ds-class {
+    padding: 18px 16px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--indigo-ink);
+    background: var(--chip-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.1;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ds-class { color: #C9C3FF; } }
+  :root[data-theme="dark"] .ds-class { color: #C9C3FF; }
+  .ds-class small { font-size: 10.5px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+  .ds-subjects { padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip {
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* ---------- Features ---------- */
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 900px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .feature-grid { grid-template-columns: 1fr; } }
+  .feature {
+    padding: 26px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .feature-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .feature h3 { font-size: 16.5px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: var(--text-soft); margin: 0; }
+
+  /* ---------- Pricing ---------- */
+  .marks-table {
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .mt-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; }
+  .mt-row + .mt-row { border-top: 1px solid var(--border); }
+  .mt-row.head { background: var(--bg-alt); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 14px; }
+  .mt-cell { padding: 16px 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .mt-row.head .mt-cell:not(:first-child) { justify-content: center; text-align: center; }
+  .mt-row:not(.head) .mt-cell:not(:first-child) { justify-content: center; }
+  .mt-cell.plan-name { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .plan-price { font-size: 12.5px; color: var(--text-faint); font-weight: 500; }
+  .yes { color: #1F7A4D; font-weight: 700; }
+  .dash { color: var(--text-faint); }
+  @media (max-width: 620px) { .mt-cell { padding: 12px 10px; font-size: 12.5px; } }
+
+  /* ---------- Privacy (document treatment) ---------- */
+  .doc-section { background: var(--bg-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .doc {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px clamp(24px, 5vw, 56px);
+  }
+  .doc h2 { font-size: 26px; font-weight: 700; }
+  .doc .doc-updated { color: var(--text-faint); font-size: 13px; margin-top: 8px; }
+  .doc h3 { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; margin: 34px 0 10px; }
+  .doc p, .doc li { font-size: 14.5px; color: var(--text-soft); max-width: 62ch; }
+  .doc ul { padding-left: 20px; margin: 10px 0; }
+  .doc li { margin-bottom: 6px; }
+  .doc strong { color: var(--text); }
+  .doc a.link { color: var(--indigo-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .doc a.link { color: #C9C3FF; } }
+  :root[data-theme="dark"] .doc a.link { color: #C9C3FF; }
+
+  /* ---------- Footer ---------- */
+  footer { padding: 48px 0 40px; }
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-links { display: flex; gap: 22px; font-size: 13.5px; font-weight: 600; color: var(--text-soft); }
+  .footer-links a { text-decoration: none; }
+  .footer-links a:hover { color: var(--indigo-ink); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 22px;
+    font-size: 12.5px;
+    color: var(--text-faint);
+  }
+
+  :focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-row">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 8l10 5 8-4.1V15h1.5V8L12 3z" fill="#fff"/><path d="M6 11.5V16c0 1.7 2.7 3.5 6 3.5s6-1.8 6-3.5v-4.5l-6 3-6-3z" fill="#fff" fill-opacity="0.92"/></svg>
+      </span>
+      <span>
+        <span class="brand-name">ExamAce</span><br>
+        <span class="brand-super">BY RK INNOVATIONS</span>
+      </span>
+    </a>
+    <div class="nav-links">
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#subjects">Subjects</a>
+      <a class="hide-sm" href="#pricing">Pricing</a>
+      <a href="#privacy">Privacy</a>
+      <a class="pill pill-primary" href="#pricing">Get early access</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">AI-graded CBSE practice · Classes 8–12</p>
+        <h1>Every answer,<br><span class="hero-accent">marked like a teacher would.</span></h1>
+        <p class="lede">Write your answer the way you would in the exam. ExamAce grades it in seconds against the official CBSE marking scheme — full marks for the right concepts, partial credit where it's due, and feedback you can actually learn from.</p>
+        <div class="hero-ctas">
+          <a class="pill pill-primary" href="#pricing">Get early access</a>
+          <a class="pill pill-ghost" href="#how">See how grading works</a>
+        </div>
+        <p class="hero-note">Coming soon to Google Play · No ads, ever</p>
+      </div>
+      <div class="sheet-wrap">
+        <div class="floaty floaty-1">🖋️ Marked in 4.2s</div>
+        <div class="sheet">
+          <div class="sheet-head"><span>Chemistry · Class 10 · Chemical Reactions</span><span>3 marks</span></div>
+          <div class="sheet-q">Q7. Why should a magnesium ribbon be cleaned before burning in air?</div>
+          <div class="sheet-answer"><span class="mark-tick">✓</span>Because a layer of magnesium oxide forms on the surface, which stops it from burning properly. Cleaning removes this coating so the metal can react directly with oxygen.</div>
+          <div class="score-circle">3/3</div>
+          <div class="sticky">
+            <b>AI Feedback</b>
+            You got the oxide-layer reasoning exactly right — that's the key concept examiners look for here. Nicely explained.
+          </div>
+          <div class="mastery-chip"><span class="dot"></span>Topic mastery: Strong</div>
+        </div>
+        <div class="floaty floaty-2">📘 NCERT-aligned</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container stat-grid">
+      <div class="stat"><div class="stat-num">4,494+</div><div class="stat-label">Practice questions, and growing</div></div>
+      <div class="stat"><div class="stat-num">27</div><div class="stat-label">Subject &amp; class combinations</div></div>
+      <div class="stat"><div class="stat-num">8–12</div><div class="stat-label">Classes covered</div></div>
+      <div class="stat"><div class="stat-num">&lt;5s</div><div class="stat-label">Typical grading time</div></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>From question to feedback in three steps.</h2>
+        <p>No waiting for a teacher to return your notebook — the whole loop happens while you're still in study mode.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><h3>Pick a subject &amp; chapter</h3><p>Physics numericals, English comprehension, Accountancy journal entries — jump to exactly what you're revising.</p></div>
+        <div class="step"><div class="step-num">2</div><h3>Write your answer</h3><p>Short answer, long answer or MCQ — answer it the way you would on the actual exam script.</p></div>
+        <div class="step"><div class="step-num">3</div><h3>Get marked instantly</h3><p>A score against the question's marks, a model answer, and a topic-mastery signal so you know what to revise next.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="subjects">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Coverage</p>
+        <h2>Practice across every subject on your date sheet.</h2>
+        <p>Every question is sourced from NCERT textbooks — the same books your exam is set from.</p>
+      </div>
+      <div class="datesheet">
+        <div class="datesheet-head"><span>ExamAce Practice — Subject Coverage</span><span class="sub">Classes VIII–XII</span></div>
+        <div class="ds-row"><div class="ds-class">VIII<small>Class 8</small></div><div class="ds-subjects"><span class="chip">English</span><span class="chip">Maths</span><span class="chip">Science</span><span class="chip">Social Science</span></div></div>
+        <div class="ds-row"><div class="ds-class">IX<small>Class 9</small></div><div class="ds-subjects"><span class="chip">English</span><span class="chip">Maths</span><span class="chip">Science</span><span class="chip">Social Science</span><span class="chip">Physical Education</span><span class="chip">Skill Education</span></div></div>
+        <div class="ds-row"><div class="ds-class">X<small>Class 10</small></div><div class="ds-subjects"><span class="chip">English</span><span class="chip">Math</span><span class="chip">Science</span><span class="chip">Social Science</span><span class="chip">Health &amp; Physical Education</span></div></div>
+        <div class="ds-row"><div class="ds-class">XI<small>Class 11</small></div><div class="ds-subjects"><span class="chip">English</span><span class="chip">Physics</span><span class="chip">Chemistry</span><span class="chip">Maths</span><span class="chip">Biology</span></div></div>
+        <div class="ds-row"><div class="ds-class">XII<small>Class 12</small></div><div class="ds-subjects"><span class="chip">Physics</span><span class="chip">Chemistry</span><span class="chip">Maths</span><span class="chip">Biology</span><span class="chip">Accountancy</span><span class="chip">History</span><span class="chip">Computerized Accounting</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Why ExamAce</p>
+        <h2>Built around how CBSE actually grades.</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon" style="background:color-mix(in srgb, var(--indigo) 14%, transparent);">✍️</div>
+          <h3>Marking-scheme grading</h3>
+          <p>Marks are awarded per correct concept or step, with partial credit — the same way a CBSE evaluator would mark your script.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:color-mix(in srgb, var(--gold) 22%, transparent);">📖</div>
+          <h3>Model answers, every time</h3>
+          <p>See exactly what a full-marks answer looks like right after you submit — not days later with your notebook.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:color-mix(in srgb, #1F7A4D 16%, transparent);">📊</div>
+          <h3>Topic mastery tracking</h3>
+          <p>Every attempt rolls up into a Weak / Developing / Strong signal per topic, so revision time goes where it's needed.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:color-mix(in srgb, var(--violet) 14%, transparent);">📚</div>
+          <h3>NCERT-sourced questions</h3>
+          <p>Every question is drawn from the NCERT textbooks Classes 8–12 are actually examined on.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:color-mix(in srgb, var(--ink-red) 12%, transparent);">🧩</div>
+          <h3>Every question type</h3>
+          <p>MCQs, short answers and long answers — practise the same formats you'll see on exam day.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon" style="background:color-mix(in srgb, var(--indigo) 14%, transparent);">🎯</div>
+          <h3>Free daily practice</h3>
+          <p>Five questions a day, graded in full, free forever — no trial period, no credit card.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Pricing</p>
+        <h2>Simple, like a marks distribution.</h2>
+        <p>Start free. Upgrade only if five questions a day stops being enough.</p>
+      </div>
+      <div class="marks-table">
+        <div class="mt-row head">
+          <div class="mt-cell">Included</div>
+          <div class="mt-cell">Free</div>
+          <div class="mt-cell">Premium</div>
+        </div>
+        <div class="mt-row">
+          <div class="mt-cell plan-name">Daily practice questions</div>
+          <div class="mt-cell">5 / day</div>
+          <div class="mt-cell yes">Unlimited</div>
+        </div>
+        <div class="mt-row">
+          <div class="mt-cell plan-name">Instant AI grading &amp; feedback</div>
+          <div class="mt-cell yes">✓</div>
+          <div class="mt-cell yes">✓</div>
+        </div>
+        <div class="mt-row">
+          <div class="mt-cell plan-name">Model answers</div>
+          <div class="mt-cell yes">✓</div>
+          <div class="mt-cell yes">✓</div>
+        </div>
+        <div class="mt-row">
+          <div class="mt-cell plan-name">Topic mastery dashboard</div>
+          <div class="mt-cell yes">✓</div>
+          <div class="mt-cell yes">✓</div>
+        </div>
+        <div class="mt-row">
+          <div class="mt-cell plan-name">Priority grading queue</div>
+          <div class="mt-cell dash">—</div>
+          <div class="mt-cell yes">✓</div>
+        </div>
+        <div class="mt-row">
+          <div class="mt-cell plan-name">Price</div>
+          <div class="mt-cell" style="font-weight:700;">₹0</div>
+          <div class="mt-cell" style="font-weight:700;">Introductory pricing coming soon</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy" class="doc-section">
+    <div class="container">
+      <div class="doc">
+        <p class="eyebrow">Legal</p>
+        <h2>Privacy Policy</h2>
+        <p class="doc-updated">Last updated: September 2026 · Applies to the ExamAce app and this page</p>
+
+        <h3>Who we are</h3>
+        <p>ExamAce is developed and operated by <strong>RK Innovations</strong> ("RK Innovations", "we", "us"). This policy explains what information ExamAce collects, why, and how it's handled.</p>
+
+        <h3>Information we collect</h3>
+        <ul>
+          <li><strong>Account information</strong> — your name, email address, and a securely hashed password when you register. We never store your password in plain text.</li>
+          <li><strong>Practice activity</strong> — the questions you attempt, the answers you submit, your scores, and the AI-generated feedback for each attempt, so your progress dashboard can be built from it.</li>
+          <li><strong>Subscription status</strong> — whether your account is on the Free or Premium tier.</li>
+          <li><strong>Basic technical data</strong> — standard request metadata (like IP address) used only for rate-limiting and abuse prevention, not for tracking.</li>
+        </ul>
+        <p>We do not run advertising and do not use third-party analytics or tracking SDKs in the app.</p>
+
+        <h3>How your answers are graded</h3>
+        <p>When you submit a practice answer, its text is sent to <strong>Anthropic</strong> (the maker of Claude) solely to generate a score, feedback, and a model answer. Anthropic processes this text as our service provider under its own data-handling terms and does not use it to train models. No other content from your account is shared with Anthropic.</p>
+
+        <h3>How we use your information</h3>
+        <ul>
+          <li>To create and secure your account, and keep you signed in.</li>
+          <li>To grade your practice answers and show you feedback.</li>
+          <li>To calculate your progress and topic-mastery dashboard.</li>
+          <li>To enforce the free-tier daily question limit and Premium entitlements.</li>
+          <li>To investigate abuse — such as automated sign-in attempts — using rate-limiting.</li>
+        </ul>
+        <p>We do not sell your personal information, to anyone, ever.</p>
+
+        <h3>Payments</h3>
+        <p>Premium subscriptions, once live, will be processed through RevenueCat and the app store you subscribed through (Google Play or the App Store). RK Innovations does not directly receive or store your payment card details.</p>
+
+        <h3>Data retention &amp; deletion</h3>
+        <p>We keep your account and practice history for as long as your account is active, so your progress isn't lost between sessions. To request deletion of your account and associated data, email us at the address below — we don't yet have a self-service delete option in the app, but we'll act on requests promptly.</p>
+
+        <h3>Children's privacy</h3>
+        <p>ExamAce is built for students preparing for CBSE Class 8–12 exams, many of whom are minors. We collect only what's described above, never request more than a name and email to create an account, and recommend that students under 18 have a parent or guardian review this policy with them before signing up.</p>
+
+        <h3>Security</h3>
+        <p>Passwords are hashed, not stored in plain text; all traffic between the app and our servers is encrypted (HTTPS); and sign-in is protected against automated password-guessing with rate limits and account lockouts.</p>
+
+        <h3>Your rights</h3>
+        <p>You can request a copy of the personal data we hold about you, ask us to correct it, or ask us to delete your account entirely, at any time, by contacting us below.</p>
+
+        <h3>Changes to this policy</h3>
+        <p>If this policy changes, we'll update the date at the top of this page. Material changes will also be noted in the app.</p>
+
+        <h3>Contact us</h3>
+        <p>Questions about this policy or your data — write to <a class="link" href="mailto:privacy@rk-innovations.in">privacy@rk-innovations.in</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-row">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 8l10 5 8-4.1V15h1.5V8L12 3z" fill="#fff"/><path d="M6 11.5V16c0 1.7 2.7 3.5 6 3.5s6-1.8 6-3.5v-4.5l-6 3-6-3z" fill="#fff" fill-opacity="0.92"/></svg>
+        </span>
+        <span><span class="brand-name">ExamAce</span><br><span class="brand-super">BY RK INNOVATIONS</span></span>
+      </a>
+      <div class="footer-links">
+        <a href="#how">How it works</a>
+        <a href="#subjects">Subjects</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="mailto:hello@rk-innovations.in">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 RK Innovations. ExamAce is a product of RK Innovations.</span>
+      <span>More RK Innovations apps, coming soon.</span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

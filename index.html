@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RK Innovations</title>
+<meta name="description" content="RK Innovations builds focused software products, starting with ExamAce.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo: #4F46E5;
+    --indigo-ink: #3730A3;
+    --violet: #6D28D9;
+    --gold: #FBBF24;
+    --bg: #F3F1EC;
+    --surface: #FFFFFF;
+    --text: #1F1B3A;
+    --text-soft: #5B577A;
+    --text-faint: #8B87A6;
+    --border: #E2DFD4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14121F; --surface: #1E1A2E; --text: #EFEDFA;
+      --text-soft: #B6B1D6; --text-faint: #8983AD; --border: #322C49;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14121F; --surface: #1E1A2E; --text: #EFEDFA;
+    --text-soft: #B6B1D6; --text-faint: #8983AD; --border: #322C49;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 24px;
+  }
+  h1 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: clamp(30px, 5vw, 44px); margin: 0; text-wrap: balance; }
+  p.tagline { color: var(--text-soft); font-size: 17px; margin: 14px 0 0; max-width: 44ch; }
+  .mark {
+    width: 56px; height: 56px; border-radius: 15px;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+  }
+  .product-card {
+    margin-top: 44px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 22px;
+    text-decoration: none;
+    color: var(--text);
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 18px 40px -22px rgba(31, 27, 58, 0.25);
+    transition: transform .15s ease;
+  }
+  .product-card:hover { transform: translateY(-2px); }
+  .product-icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .product-info { text-align: left; }
+  .product-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 16px; }
+  .product-desc { font-size: 13px; color: var(--text-soft); margin-top: 2px; }
+  .product-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, transparent); padding: 3px 9px; border-radius: 999px; margin-left: auto; white-space: nowrap; }
+  footer { padding: 22px; text-align: center; font-size: 12.5px; color: var(--text-faint); }
+  :focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+</style>
+</head>
+<body>
+  <main>
+    <div class="mark" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 12h4l2-7 4 14 2-7h4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h1>RK Innovations</h1>
+    <p class="tagline">A small studio building focused, well-made software. Starting with exam prep.</p>
+
+    <a class="product-card" href="/examace/">
+      <span class="product-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 8l10 5 8-4.1V15h1.5V8L12 3z" fill="#fff"/><path d="M6 11.5V16c0 1.7 2.7 3.5 6 3.5s6-1.8 6-3.5v-4.5l-6 3-6-3z" fill="#fff" fill-opacity="0.92"/></svg>
+      </span>
+      <span class="product-info">
+        <span class="product-name">ExamAce</span>
+        <span class="product-desc">AI-graded CBSE practice for Classes 8–12</span>
+      </span>
+      <span class="product-eyebrow">Explore</span>
+    </a>
+  </main>
+  <footer>© 2026 RK Innovations</footer>
+</body>
+</html>
