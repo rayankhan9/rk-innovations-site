@@ -140,17 +140,20 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .pill-primary {
+  /* .pill.pill-* (not just .pill-*): a bare single class here loses a specificity
+     fight to ".nav-links a" wherever a pill sits inside the nav — two classes beats
+     one class + one element, so the color always applies regardless of context. */
+  .pill.pill-primary {
     background: linear-gradient(135deg, var(--indigo), var(--violet));
-    color: white;
+    color: #fff;
     box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--indigo) 70%, transparent);
   }
-  .pill-ghost {
+  .pill.pill-ghost {
     background: transparent;
     color: var(--text);
     border-color: var(--border-strong);
   }
-  .pill-soft {
+  .pill.pill-soft {
     background: var(--chip-bg);
     color: var(--text-soft);
     font-size: 13px;
@@ -680,7 +683,7 @@
         <div class="mt-row">
           <div class="mt-cell plan-name">Price</div>
           <div class="mt-cell" style="font-weight:700;">₹0</div>
-          <div class="mt-cell" style="font-weight:700;">One-time · price coming soon</div>
+          <div class="mt-cell" style="font-weight:700;">₹499 · one year</div>
         </div>
       </div>
       <p style="text-align:center; margin-top:20px; font-size:13.5px; color:var(--text-soft);">Premium is a one-time purchase covering 1 year of access — not a subscription. It never auto-renews or bills you again; when it runs out, you simply choose whether to buy another year.</p>
