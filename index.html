@@ -53,11 +53,13 @@
   h1 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: clamp(30px, 5vw, 44px); margin: 0; text-wrap: balance; }
   p.tagline { color: var(--text-soft); font-size: 17px; margin: 14px 0 0; max-width: 44ch; }
   .mark {
-    width: 56px; height: 56px; border-radius: 15px;
-    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    width: 76px; height: 76px; border-radius: 18px;
+    background: #fff;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 22px;
+    box-shadow: 0 12px 28px -14px rgba(31, 27, 58, 0.35);
   }
+  .mark img { width: 56px; height: auto; }
   .product-card {
     margin-top: 44px;
     display: flex;
@@ -77,8 +79,7 @@
   .product-card:hover { transform: translateY(-2px); }
   .product-icon {
     width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--indigo), var(--violet));
-    display: flex; align-items: center; justify-content: center;
+    display: block;
   }
   .product-info { text-align: left; }
   .product-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 16px; }
@@ -90,16 +91,15 @@
 </head>
 <body>
   <main>
-    <div class="mark" aria-hidden="true">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 12h4l2-7 4 14 2-7h4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="mark">
+      <img src="/assets/rk-mark.png" alt="RK Innovations">
     </div>
     <h1>RK Innovations</h1>
     <p class="tagline">A small studio building focused, well-made software. Starting with exam prep.</p>
 
     <a class="product-card" href="/examace/">
-      <span class="product-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 8l10 5 8-4.1V15h1.5V8L12 3z" fill="#fff"/><path d="M6 11.5V16c0 1.7 2.7 3.5 6 3.5s6-1.8 6-3.5v-4.5l-6 3-6-3z" fill="#fff" fill-opacity="0.92"/></svg>
-      </span>
+      <img class="product-icon" src="/assets/examace-icon.png" alt="">
+
       <span class="product-info">
         <span class="product-name">ExamAce</span>
         <span class="product-desc">AI-graded CBSE practice for Classes 8–12</span>

@@ -116,8 +116,7 @@
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .brand-mark {
     width: 34px; height: 34px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--indigo), var(--violet));
-    display: flex; align-items: center; justify-content: center;
+    display: block;
     flex-shrink: 0;
   }
   .brand-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; color: var(--text); }
@@ -156,6 +155,22 @@
     color: var(--text-soft);
     font-size: 13px;
   }
+
+  .play-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #000;
+    color: #fff;
+    border-radius: 10px;
+    padding: 9px 16px 9px 14px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .play-badge svg { flex-shrink: 0; }
+  .play-badge .play-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .play-badge .play-eyebrow { font-size: 9.5px; letter-spacing: 0.04em; opacity: 0.85; }
+  .play-badge .play-name { font-family: 'Poppins', sans-serif; font-size: 15.5px; font-weight: 600; }
 
   /* ---------- Hero ---------- */
   .hero {
@@ -489,9 +504,7 @@
 <nav class="nav">
   <div class="nav-row">
     <a class="brand" href="#top">
-      <span class="brand-mark" aria-hidden="true">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 8l10 5 8-4.1V15h1.5V8L12 3z" fill="#fff"/><path d="M6 11.5V16c0 1.7 2.7 3.5 6 3.5s6-1.8 6-3.5v-4.5l-6 3-6-3z" fill="#fff" fill-opacity="0.92"/></svg>
-      </span>
+      <img class="brand-mark" src="/assets/examace-icon.png" alt="" width="34" height="34">
       <span>
         <span class="brand-name">ExamAce</span><br>
         <span class="brand-super">BY RK INNOVATIONS</span>
@@ -502,7 +515,8 @@
       <a class="hide-sm" href="#subjects">Subjects</a>
       <a class="hide-sm" href="#pricing">Pricing</a>
       <a href="#privacy">Privacy</a>
-      <a class="pill pill-primary" href="#pricing">Get early access</a>
+      <!-- TODO: replace href="#" with the real Play Store listing URL -->
+      <a class="pill pill-primary" href="#">Get it on Google Play</a>
     </div>
   </div>
 </nav>
@@ -515,10 +529,14 @@
         <h1>Every answer,<br><span class="hero-accent">marked like a teacher would.</span></h1>
         <p class="lede">Write your answer the way you would in the exam. ExamAce grades it in seconds against the official CBSE marking scheme — full marks for the right concepts, partial credit where it's due, and feedback you can actually learn from.</p>
         <div class="hero-ctas">
-          <a class="pill pill-primary" href="#pricing">Get early access</a>
+          <!-- TODO: replace href="#" with the real Play Store listing URL -->
+          <a class="play-badge" href="#" aria-label="Get ExamAce on Google Play">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 3.5v17a1 1 0 0 0 1.5.87l14-8.5a1 1 0 0 0 0-1.74l-14-8.5A1 1 0 0 0 4 3.5z" fill="#fff"/></svg>
+            <span class="play-text"><span class="play-eyebrow">GET IT ON</span><span class="play-name">Google Play</span></span>
+          </a>
           <a class="pill pill-ghost" href="#how">See how grading works</a>
         </div>
-        <p class="hero-note">Coming soon to Google Play · No ads, ever</p>
+        <p class="hero-note">Free to start · No ads, ever</p>
       </div>
       <div class="sheet-wrap">
         <div class="floaty floaty-1">🖋️ Marked in 4.2s</div>
@@ -729,9 +747,7 @@
   <div class="container">
     <div class="footer-row">
       <a class="brand" href="#top">
-        <span class="brand-mark" aria-hidden="true">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 3L2 8l10 5 8-4.1V15h1.5V8L12 3z" fill="#fff"/><path d="M6 11.5V16c0 1.7 2.7 3.5 6 3.5s6-1.8 6-3.5v-4.5l-6 3-6-3z" fill="#fff" fill-opacity="0.92"/></svg>
-        </span>
+        <img class="brand-mark" src="/assets/examace-icon.png" alt="" width="34" height="34">
         <span><span class="brand-name">ExamAce</span><br><span class="brand-super">BY RK INNOVATIONS</span></span>
       </a>
       <div class="footer-links">
