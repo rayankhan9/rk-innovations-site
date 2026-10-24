@@ -1,0 +1,26 @@
+@model ShiftVm
+@{ ViewData["Title"] = Model.Id == 0 ? "New shift" : "Edit shift"; string[] dn = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" }; }
+<div class="page-h"><h1>@ViewData["Title"]</h1></div>
+<form method="post" class="card-x" style="max-width:640px">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+    <div class="row g-3">
+        <div class="col-12"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="Start" class="form-label"></label><input asp-for="Start" type="time" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="End" class="form-label"></label><input asp-for="End" type="time" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="GraceMinutes" class="form-label"></label><input asp-for="GraceMinutes" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="HalfDayHours" class="form-label"></label><input asp-for="HalfDayHours" class="form-control" /></div>
+        <div class="col-12">
+            <label class="form-label">Working days</label>
+            <div class="d-flex flex-wrap gap-3">
+                @for (int i = 1; i <= 7; i++)
+                {
+                    int d = i % 7;
+                    <label class="form-check"><input type="checkbox" class="form-check-input" name="Days" value="@d" checked="@Model.Days.Contains(d)" /> <span class="form-check-label">@dn[d]</span></label>
+                }
+            </div>
+        </div>
+        <div class="col-12"><label class="form-check"><input type="checkbox" class="form-check-input" name="MakeDefault" value="true" checked="@Model.MakeDefault" /> <span class="form-check-label">Use as organization default (applies to users with no shift)</span></label></div>
+    </div>
+    <div class="mt-4"><button class="btn btn-primary">Save</button> <a asp-action="Index" class="btn btn-link">Cancel</a></div>
+</form>

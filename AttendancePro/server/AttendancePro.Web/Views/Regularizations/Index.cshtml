@@ -1,0 +1,37 @@
+@model List<RegularizationRequest>
+@{ ViewData["Title"] = "Attendance corrections"; }
+<div class="page-h"><h1>Attendance corrections</h1>
+    <div class="btn-group btn-group-sm">
+        <a class="btn btn-outline-secondary @(ViewBag.Status == null ? "active" : "")" asp-route-status="">All</a>
+        @foreach (var s in new[] { RequestStatus.Pending, RequestStatus.Approved, RequestStatus.Rejected }) {<a class="btn btn-outline-secondary @(ViewBag.Status == s ? "active" : "")" asp-route-status="@s">@s</a>}
+    </div></div>
+<p class="text-muted">Members ask for a fix when they forgot to sign out, had phone trouble, etc. Approving updates (or creates) their attendance record and is audited.</p>
+<div class="card-x p-0 table-responsive">
+<table class="table align-middle mb-0">
+    <thead><tr><th>Member</th><th>Date</th><th>Requested</th><th>Reason</th><th>Status</th><th style="width:300px"></th></tr></thead>
+    <tbody>
+    @foreach (var r in Model)
+    {
+        <tr>
+            <td><a asp-controller="Users" asp-action="Details" asp-route-id="@r.UserId" class="text-decoration-none">@r.User?.FullName</a></td>
+            <td>@r.Date.ToString("ddd dd MMM yyyy")</td>
+            <td>In @(r.RequestedIn?.ToString(@"hh\:mm") ?? "—") · Out @(r.RequestedOut?.ToString(@"hh\:mm") ?? "—")</td>
+            <td class="small">@r.Reason</td>
+            <td><span class="pill @r.Status">@r.Status</span>@if (r.ReviewNote != null) {<div class="small text-muted">@r.ReviewNote</div>}</td>
+            <td>
+                @if (r.Status == RequestStatus.Pending)
+                {
+                    <form asp-action="Review" method="post" class="d-flex gap-1">
+                        <input type="hidden" name="id" value="@r.Id" />
+                        <input name="note" class="form-control form-control-sm" placeholder="Note (optional)" />
+                        <button name="approve" value="true" class="btn btn-sm btn-primary">Approve</button>
+                        <button name="approve" value="false" class="btn btn-sm btn-outline-danger">Reject</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    @if (Model.Count == 0) {<tr><td colspan="6" class="text-center text-muted py-4">Nothing here.</td></tr>}
+    </tbody>
+</table>
+</div>

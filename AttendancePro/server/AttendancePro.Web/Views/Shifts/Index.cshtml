@@ -1,0 +1,25 @@
+@model List<Shift>
+@{ ViewData["Title"] = "Shifts"; var users = (Dictionary<int, int>)ViewBag.Users; var org = (Organization)ViewBag.Org; string[] dn = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" }; }
+<div class="page-h"><h1>Shifts &amp; timetables</h1><a asp-action="Create" class="btn btn-primary btn-sm">+ Add shift</a></div>
+<p class="text-muted">A shift defines working days, start/end time and the grace period used to decide who is late.</p>
+<div class="card-x p-0 table-responsive">
+<table class="table align-middle mb-0">
+    <thead><tr><th>Name</th><th>Hours</th><th>Days</th><th>Grace</th><th>Assigned</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var s in Model)
+    {
+        <tr>
+            <td class="fw-semibold">@s.Name @if (org.DefaultShiftId == s.Id) {<span class="badge text-bg-success">default</span>}</td>
+            <td>@s.StartTime.ToString(@"hh\:mm") – @s.EndTime.ToString(@"hh\:mm")</td>
+            <td>@string.Join(" ", Enumerable.Range(0, 7).Where(i => s.IsWorkDay((DayOfWeek)i)).Select(i => dn[i]))</td>
+            <td>@s.GraceMinutes min</td>
+            <td>@(users.TryGetValue(s.Id, out var n) ? n : 0)</td>
+            <td class="text-end">
+                <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <form asp-action="Delete" asp-route-id="@s.Id" method="post" class="d-inline" onsubmit="return confirm('Delete shift?')"><button class="btn btn-sm btn-outline-danger">✕</button></form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>

@@ -1,0 +1,28 @@
+@using AttendancePro.Web.Services
+@model List<(ApplicationUser User, DayInfo Day)>
+@{
+    ViewData["Title"] = "Daily roll call";
+    var d = (DateOnly)ViewBag.Date;
+    var org = (Organization)ViewBag.Org;
+}
+<div class="page-h"><h1>Daily roll call</h1>
+    <form method="get" class="d-flex gap-2 align-items-center"><a class="btn btn-sm btn-outline-secondary" asp-route-date="@d.AddDays(-1).ToString("yyyy-MM-dd")">‹</a>
+        <input type="date" name="date" value="@d.ToString("yyyy-MM-dd")" class="form-control form-control-sm" onchange="this.form.submit()" />
+        <a class="btn btn-sm btn-outline-secondary" asp-route-date="@d.AddDays(1).ToString("yyyy-MM-dd")">›</a></form></div>
+<div class="row g-3 mb-3">
+    @foreach (var g in Model.GroupBy(r => r.Day.Status).OrderBy(g => g.Key))
+    {
+        <div class="col-6 col-md-2"><div class="kpi"><div class="v">@g.Count()</div><div class="l">@g.Key</div></div></div>
+    }
+</div>
+<div class="card-x p-0 table-responsive"><table class="table table-sm align-middle mb-0">
+    <thead><tr><th>Name</th><th>Dept</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th></tr></thead><tbody>
+    @foreach (var (u, day) in Model.OrderBy(r => r.Day.Status == DayStatus.Absent ? 0 : 1).ThenBy(r => r.User.FullName))
+    {
+        <tr><td><a asp-controller="Users" asp-action="Details" asp-route-id="@u.Id" class="text-decoration-none">@u.FullName</a></td><td>@u.Department</td>
+            <td><span class="pill @day.Status">@day.Status</span> <span class="small text-muted">@day.Note</span></td>
+            <td>@(day.FirstInUtc == null ? "—" : OrgTime.ToLocal(day.FirstInUtc.Value, org).ToString("HH:mm"))</td>
+            <td>@(day.LastOutUtc == null ? "—" : OrgTime.ToLocal(day.LastOutUtc.Value, org).ToString("HH:mm"))</td>
+            <td>@day.Hours.ToString("0.0")</td></tr>
+    }
+    </tbody></table></div>

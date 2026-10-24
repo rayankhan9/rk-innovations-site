@@ -1,0 +1,12 @@
+@using AttendancePro.Web.Services
+@model List<AuditLog>
+@{ ViewData["Title"] = "Audit log"; var org = (Organization)ViewBag.Org; }
+<div class="page-h"><h1>Audit log</h1></div>
+<div class="card-x p-0 table-responsive"><table class="table table-sm align-middle mb-0">
+    <thead><tr><th>When</th><th>Who</th><th>Action</th><th>Details</th><th>IP</th></tr></thead><tbody>
+    @foreach (var a in Model)
+    {
+        <tr><td class="text-nowrap">@OrgTime.ToLocal(a.AtUtc, org).ToString("dd MMM yyyy HH:mm")</td><td>@a.ActorName</td><td><code>@a.Action</code></td><td class="small">@a.Details</td><td class="small text-muted">@a.Ip</td></tr>
+    }
+    </tbody></table></div>
+<partial name="_Pager" model="((int)ViewBag.Page, (int)ViewBag.Total, 50)" />

@@ -1,0 +1,62 @@
+@using AttendancePro.Web.Services
+@model ApplicationUser
+@{
+    ViewData["Title"] = Model.FullName;
+    var s = (MonthSummary)ViewBag.Summary;
+    var recent = (List<AttendanceRecord>)ViewBag.Recent;
+    var org = (Organization)ViewBag.Org;
+    var first = new DateOnly(s.Year, s.Month, 1);
+    var prev = first.AddMonths(-1); var next = first.AddMonths(1);
+    int offset = ((int)first.DayOfWeek + 6) % 7; // Monday first
+}
+<div class="page-h">
+    <div><h1>@Model.FullName <span class="pill @Model.Status">@Model.Status</span></h1><div class="text-muted small">@Model.Email · @Model.EmployeeCode · @Model.Department @Model.Designation · Shift: @(Model.Shift?.Name ?? "default") · Locations: @(((List<string>)ViewBag.Sites).Count == 0 ? "any" : string.Join(", ", (List<string>)ViewBag.Sites))</div></div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <a asp-controller="Attendance" asp-action="Manual" asp-route-userId="@Model.Id" class="btn btn-sm btn-outline-primary">+ Manual entry</a>
+    </div>
+</div>
+
+<div class="d-flex align-items-center gap-2 mb-3">
+    <a class="btn btn-sm btn-outline-secondary" asp-route-id="@Model.Id" asp-route-year="@prev.Year" asp-route-month="@prev.Month">‹</a>
+    <strong>@first.ToString("MMMM yyyy")</strong>
+    <a class="btn btn-sm btn-outline-secondary" asp-route-id="@Model.Id" asp-route-year="@next.Year" asp-route-month="@next.Month">›</a>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3 col-xl"><div class="kpi good"><div class="v">@s.AttendancePercent%</div><div class="l">Attendance</div></div></div>
+    <div class="col-6 col-md-3 col-xl"><div class="kpi"><div class="v">@s.PresentDays<small class="text-muted fs-6"> / @s.WorkingDays</small></div><div class="l">Present / working days</div></div></div>
+    <div class="col-6 col-md-3 col-xl"><div class="kpi bad"><div class="v">@s.AbsentDays</div><div class="l">Absent</div></div></div>
+    <div class="col-6 col-md-3 col-xl"><div class="kpi warn"><div class="v">@s.LateDays</div><div class="l">Late (@s.TotalLateMinutes min)</div></div></div>
+    <div class="col-6 col-md-3 col-xl"><div class="kpi"><div class="v">@s.TotalHours</div><div class="l">Hours worked</div></div></div>
+    <div class="col-6 col-md-3 col-xl"><div class="kpi"><div class="v">@s.PunctualityPercent%</div><div class="l">Punctuality</div></div></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card-x">
+            <h2>Calendar</h2>
+            <div class="cal mb-1 text-center text-muted" style="font-size:.7rem">@foreach (var d in new[] { "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su" }) {<div>@d</div>}</div>
+            <div class="cal">
+                @for (int i = 0; i < offset; i++) {<div></div>}
+                @foreach (var d in s.Days) {<div class="d @d.Status" title="@d.Status @(d.Hours > 0 ? d.Hours + " h" : "")@(d.Note != null ? " · " + d.Note : "")">@d.Date.Day</div>}
+            </div>
+            <div class="small text-muted mt-2">Green present · yellow late · amber half day · red absent · blue leave · purple holiday</div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card-x p-0 table-responsive">
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Site</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var a in recent)
+                {
+                    <tr><td>@a.WorkDate.ToString("ddd dd MMM")</td><td>@OrgTime.ToLocal(a.CheckInUtc, org).ToString("HH:mm")@if (a.IsLate) {<span class="pill Late ms-1">+@(a.LateMinutes)m</span>}</td>
+                        <td>@(a.CheckOutUtc == null ? "—" : OrgTime.ToLocal(a.CheckOutUtc.Value, org).ToString("HH:mm"))</td><td>@a.WorkedHours.ToString("0.0")</td><td>@a.Site?.Name</td>
+                        <td><a asp-controller="Attendance" asp-action="Details" asp-route-id="@a.Id">@(a.IsFlagged ? "⚑" : "view")</a></td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

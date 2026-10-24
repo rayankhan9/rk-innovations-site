@@ -1,0 +1,62 @@
+@model DashboardVm
+@{ ViewData["Title"] = "Dashboard"; var org = (Organization)ViewBag.Org; }
+<div class="page-h">
+    <h1>Dashboard <small class="text-muted fs-6">@(((DateOnly)ViewBag.Today).ToString("dddd, dd MMM yyyy"))</small></h1>
+    <a asp-controller="Attendance" asp-action="Manual" class="btn btn-sm btn-outline-primary">+ Manual entry</a>
+</div>
+
+@if (Model.PendingUsers + Model.PendingLeaves + Model.PendingRegs + Model.FlaggedWeek > 0)
+{
+    <div class="alert alert-warning d-flex flex-wrap gap-3 py-2">
+        <strong>Needs attention:</strong>
+        @if (Model.PendingUsers > 0) {<a asp-controller="Users" asp-action="Index" asp-route-status="Pending">@Model.PendingUsers sign-up(s) to approve</a>}
+        @if (Model.PendingLeaves > 0) {<a asp-controller="Leaves" asp-action="Index" asp-route-status="Pending">@Model.PendingLeaves leave request(s)</a>}
+        @if (Model.PendingRegs > 0) {<a asp-controller="Regularizations" asp-action="Index" asp-route-status="Pending">@Model.PendingRegs correction request(s)</a>}
+        @if (Model.FlaggedWeek > 0) {<a asp-controller="Attendance" asp-action="Index" asp-route-flaggedOnly="true">@Model.FlaggedWeek flagged punch(es) this week</a>}
+    </div>
+}
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-lg-2"><div class="kpi"><div class="v">@Model.Members</div><div class="l">Active @org.MemberLabel.ToLower()s</div></div></div>
+    <div class="col-6 col-lg-2"><div class="kpi good"><div class="v">@Model.PresentToday</div><div class="l">Present today</div></div></div>
+    <div class="col-6 col-lg-2"><div class="kpi"><div class="v">@Model.InsideNow</div><div class="l">Signed in now</div></div></div>
+    <div class="col-6 col-lg-2"><div class="kpi warn"><div class="v">@Model.LateToday</div><div class="l">Late today</div></div></div>
+    <div class="col-6 col-lg-2"><div class="kpi bad"><div class="v">@(Model.IsWorkingDayToday ? Model.AbsentSoFar.ToString() : "–")</div><div class="l">@(Model.IsWorkingDayToday ? "Not in yet" : "Off day")</div></div></div>
+    <div class="col-6 col-lg-2"><div class="kpi"><div class="v">@Model.OnLeaveToday</div><div class="l">On leave</div></div></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card-x mb-3"><h2>Daily attendance — last 14 days</h2><canvas id="trend" height="110"></canvas></div>
+        <div class="card-x">
+            <h2>@Model.MonthLabel <span class="text-muted fw-normal">· average attendance <b>@Model.MonthAvgAttendance%</b></span></h2>
+            <a asp-controller="Reports" asp-action="Monthly" class="btn btn-sm btn-outline-primary">Open monthly report</a>
+            <a asp-controller="Reports" asp-action="Daily" class="btn btn-sm btn-outline-secondary">Daily roll call</a>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-x mb-3">
+            <h2>Currently signed in</h2>
+            @if (Model.Live.Count == 0) {<p class="text-muted small mb-0">Nobody is signed in right now.</p>}
+            else {<table class="table table-sm mb-0"><tbody>@foreach (var l in Model.Live) {<tr><td>@l.Name</td><td class="text-muted">@l.Site</td><td class="text-end">@l.Since</td></tr>}</tbody></table>}
+        </div>
+        <div class="card-x">
+            <h2>Most late arrivals this month</h2>
+            @if (Model.TopLate.Count == 0) {<p class="text-muted small mb-0">No late arrivals.</p>}
+            else {<table class="table table-sm mb-0"><tbody>@foreach (var l in Model.TopLate) {<tr><td>@l.Name</td><td class="text-end"><span class="pill Late">@l.Late days</span></td></tr>}</tbody></table>}
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="~/lib/chartjs/chart.umd.js"></script>
+<script>
+  const labels = @Json.Serialize(Model.Trend.Select(t => t.Label));
+  const data = @Json.Serialize(Model.Trend.Select(t => t.Count));
+  new Chart(document.getElementById('trend'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Members present', data, backgroundColor: '#0f766e', borderRadius: 4 }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+</script>
+}

@@ -1,0 +1,7 @@
+@model string
+<select name="TimeZoneId" class="form-select">
+    @foreach (var z in TimeZoneInfo.GetSystemTimeZones().OrderBy(z => z.BaseUtcOffset).ThenBy(z => z.DisplayName))
+    {
+        <option value="@z.Id" selected="@(z.Id == Model)">@z.DisplayName</option>
+    }
+</select>

@@ -1,0 +1,51 @@
+@model List<ApplicationUser>
+@{ ViewData["Title"] = "People"; var org = (Organization)ViewBag.Org; }
+<div class="page-h">
+    <h1>@(org.Type == OrgType.Education ? "Members" : "Employees")</h1>
+    <a asp-action="Create" class="btn btn-primary btn-sm">+ Add user</a>
+</div>
+<div class="alert alert-info py-2 small">Members join by installing the mobile app and entering the join code <b>@org.Code</b>. @(org.RequireApproval ? "New sign-ups wait here for your approval." : "New sign-ups are active immediately.")</div>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><input name="q" value="@ViewBag.Q" class="form-control form-control-sm" placeholder="Search name, email or ID" /></div>
+    <div class="col-md-2">
+        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">All statuses</option>
+            @foreach (var s in Enum.GetValues<UserStatus>()) {<option value="@s" selected="@(ViewBag.Status == s)">@s</option>}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="dept" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">All departments</option>
+            @foreach (var d in (List<string>)ViewBag.Departments) {<option selected="@((string?)ViewBag.Dept == d)">@d</option>}
+        </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-sm btn-outline-secondary">Filter</button></div>
+</form>
+<div class="card-x p-0 table-responsive">
+<table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Name</th><th>ID</th><th>Department</th><th>Shift</th><th>Device</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var u in Model)
+    {
+        <tr>
+            <td><a asp-action="Details" asp-route-id="@u.Id" class="fw-semibold text-decoration-none">@u.FullName</a>@if (u.IsAdmin) {<span class="badge text-bg-dark ms-1">admin</span>}<div class="text-muted small">@u.Email</div></td>
+            <td>@u.EmployeeCode</td><td>@u.Department</td><td>@u.Shift?.Name</td>
+            <td class="small text-muted">@(string.IsNullOrEmpty(u.DeviceId) ? "—" : u.DeviceModel ?? "linked")</td>
+            <td><span class="pill @u.Status">@u.Status</span></td>
+            <td class="text-end text-nowrap">
+                @if (u.Status == UserStatus.Pending)
+                {
+                    <form asp-action="SetStatus" method="post" class="d-inline"><input type="hidden" name="id" value="@u.Id" /><input type="hidden" name="status" value="Active" /><input type="hidden" name="back" value="pending" /><button class="btn btn-sm btn-primary">Approve</button></form>
+                    <form asp-action="SetStatus" method="post" class="d-inline"><input type="hidden" name="id" value="@u.Id" /><input type="hidden" name="status" value="Disabled" /><button class="btn btn-sm btn-outline-danger">Reject</button></form>
+                }
+                else
+                {
+                    <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                }
+            </td>
+        </tr>
+    }
+    @if (Model.Count == 0) {<tr><td colspan="7" class="text-center text-muted py-4">No users match.</td></tr>}
+    </tbody>
+</table>
+</div>

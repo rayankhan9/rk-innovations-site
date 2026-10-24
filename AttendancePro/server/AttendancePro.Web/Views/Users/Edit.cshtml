@@ -1,0 +1,57 @@
+@model UserEditVm
+@{ bool isNew = string.IsNullOrEmpty(Model.Id); ViewData["Title"] = isNew ? "Add user" : "Edit user"; }
+<div class="page-h"><h1>@ViewData["Title"]</h1>@if (!isNew) {<a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary">View stats</a>}</div>
+<div class="row g-3">
+<div class="col-lg-8">
+<form method="post" class="card-x">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+    <div class="row g-3">
+        <div class="col-md-6"><label asp-for="FullName" class="form-label"></label><input asp-for="FullName" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" /></div>
+        <div class="col-md-4"><label asp-for="EmployeeCode" class="form-label"></label><input asp-for="EmployeeCode" class="form-control" /></div>
+        <div class="col-md-4"><label asp-for="Department" class="form-label"></label><input asp-for="Department" class="form-control" /></div>
+        <div class="col-md-4"><label asp-for="Designation" class="form-label"></label><input asp-for="Designation" class="form-control" /></div>
+        <div class="col-md-4"><label asp-for="ShiftId" class="form-label"></label><select asp-for="ShiftId" asp-items="Model.Shifts" class="form-select"><option value="">Organization default</option></select></div>
+        <div class="col-md-4"><label asp-for="Status" class="form-label"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<UserStatus>()" class="form-select"></select></div>
+        @if (isNew) {<div class="col-md-4"><label asp-for="Password" class="form-label"></label><input asp-for="Password" class="form-control" autocomplete="new-password" /></div>}
+        <div class="col-12">
+            <label class="form-label">Allowed locations <span class="text-muted small">(leave all unticked = any active location)</span></label>
+            <div class="d-flex flex-wrap gap-3">
+                @foreach (var s in Model.AllSites)
+                {
+                    <label class="form-check"><input type="checkbox" class="form-check-input" name="SiteIds" value="@s.Id" checked="@Model.SiteIds.Contains(s.Id)" /> <span class="form-check-label">@s.Name</span></label>
+                }
+            </div>
+        </div>
+        <div class="col-12 d-flex gap-4">
+            <label class="form-check"><input asp-for="IsAdmin" class="form-check-input" /> <span class="form-check-label">Portal administrator</span></label>
+            <label class="form-check"><input asp-for="ReceiveMonthlyReport" class="form-check-input" /> <span class="form-check-label">Email monthly report</span></label>
+        </div>
+    </div>
+    <div class="mt-4"><button class="btn btn-primary">Save</button> <a asp-action="Index" class="btn btn-link">Cancel</a></div>
+</form>
+</div>
+@if (!isNew)
+{
+<div class="col-lg-4">
+    <div class="card-x mb-3">
+        <h2>Device</h2>
+        <p class="small text-muted">@(Model.HasDevice ? $"Linked to: {Model.DeviceModel ?? "a phone"}" : "No phone linked yet — the first phone they sign in with is linked.")</p>
+        @if (Model.HasDevice) {<form asp-action="ResetDevice" method="post" asp-route-id="@Model.Id"><button class="btn btn-sm btn-outline-warning">Reset device</button></form>}
+    </div>
+    <div class="card-x mb-3">
+        <h2>Reset password</h2>
+        <form asp-action="ResetPassword" method="post" asp-route-id="@Model.Id">
+            <input name="newPassword" class="form-control form-control-sm mb-2" placeholder="New temporary password" autocomplete="new-password" />
+            <button class="btn btn-sm btn-outline-secondary">Set password</button>
+        </form>
+    </div>
+    <div class="card-x border-danger-subtle">
+        <h2 class="text-danger">Danger zone</h2>
+        <p class="small text-muted">Permanently deletes this user and all of their attendance history. Consider disabling instead.</p>
+        <form asp-action="Delete" method="post" asp-route-id="@Model.Id" onsubmit="return confirm('Permanently delete this user and all records?')"><button class="btn btn-sm btn-outline-danger">Delete user</button></form>
+    </div>
+</div>
+}
+</div>

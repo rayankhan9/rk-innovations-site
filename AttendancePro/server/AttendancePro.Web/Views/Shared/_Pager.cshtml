@@ -1,0 +1,13 @@
+@* model: (int page, int total, int size) *@
+@model (int Page, int Total, int Size)
+@{
+    int pages = (int)Math.Ceiling(Model.Total / (double)Model.Size);
+    if (pages <= 1) { return; }
+    var q = Context.Request.Query.Where(k => k.Key != "page" && k.Key != "Page").ToDictionary(k => k.Key, k => k.Value.ToString());
+    string Url(int p) { var d = new Dictionary<string, string>(q) { ["page"] = p.ToString() }; return "?" + string.Join("&", d.Select(kv => Uri.EscapeDataString(kv.Key) + "=" + Uri.EscapeDataString(kv.Value))); }
+}
+<nav class="d-flex align-items-center gap-2 mt-3 small">
+    @if (Model.Page > 1) {<a class="btn btn-sm btn-outline-secondary" href="@Url(Model.Page - 1)">‹ Prev</a>}
+    <span class="text-muted">Page @Model.Page of @pages · @Model.Total records</span>
+    @if (Model.Page < pages) {<a class="btn btn-sm btn-outline-secondary" href="@Url(Model.Page + 1)">Next ›</a>}
+</nav>

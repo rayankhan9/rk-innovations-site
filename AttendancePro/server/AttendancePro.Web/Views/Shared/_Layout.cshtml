@@ -1,0 +1,64 @@
+﻿@{
+    var org = ViewBag.Org as Organization;
+    var authed = User.Identity?.IsAuthenticated == true && org != null;
+    string Active(string c) => string.Equals((string?)ViewContext.RouteData.Values["controller"], c, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    var badge = (int?)ViewBag.PendingBadge ?? 0;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — AttendancePro</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body class="@(authed ? "" : "auth-body")">
+@if (authed)
+{
+    <div class="shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand"><span class="logo">⌖</span> AttendancePro</div>
+            <div class="org-chip">@org!.Name<small>Join code: <b>@org.Code</b></small></div>
+            <nav>
+                <a class="@Active("Dashboard")" asp-controller="Dashboard" asp-action="Index">▦ Dashboard</a>
+                <div class="nav-h">People</div>
+                <a class="@Active("Users")" asp-controller="Users" asp-action="Index">☺ @(org.Type == OrgType.Education ? "Members" : "Employees") @if (badge > 0) {<span class="badge text-bg-warning ms-1">@badge</span>}</a>
+                <a class="@Active("Leaves")" asp-controller="Leaves" asp-action="Index">✈ Leave requests</a>
+                <a class="@Active("Regularizations")" asp-controller="Regularizations" asp-action="Index">✎ Corrections</a>
+                <div class="nav-h">Attendance</div>
+                <a class="@Active("Attendance")" asp-controller="Attendance" asp-action="Index">☰ Records</a>
+                <a class="@Active("Reports")" asp-controller="Reports" asp-action="Monthly">▤ Reports</a>
+                <div class="nav-h">Setup</div>
+                <a class="@Active("Sites")" asp-controller="Sites" asp-action="Index">⌖ Locations</a>
+                <a class="@Active("Shifts")" asp-controller="Shifts" asp-action="Index">◷ Shifts</a>
+                <a class="@Active("Holidays")" asp-controller="Holidays" asp-action="Index">★ Holidays</a>
+                <a class="@Active("Settings")" asp-controller="Settings" asp-action="Index">⚙ Settings</a>
+                <a class="@Active("Audit")" asp-controller="Audit" asp-action="Index">⌕ Audit log</a>
+            </nav>
+            <div class="sb-foot">
+                <div class="small text-white-50 mb-1">@User.Identity!.Name</div>
+                <a asp-controller="Account" asp-action="Password" class="small me-2">Password</a>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline"><button class="btn btn-link btn-sm p-0 text-white-50">Sign out</button></form>
+            </div>
+        </aside>
+        <main class="content">
+            <button class="btn btn-sm btn-outline-secondary d-lg-none mb-2" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+            @if (TempData["ok"] is string ok) {<div class="alert alert-success alert-dismissible fade show">@ok<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>}
+            @if (TempData["err"] is string err) {<div class="alert alert-danger alert-dismissible fade show">@err<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>}
+            @RenderBody()
+        </main>
+    </div>
+}
+else
+{
+    <div class="auth-wrap">
+        @if (TempData["ok"] is string ok2) {<div class="alert alert-success">@ok2</div>}
+        @RenderBody()
+    </div>
+}
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

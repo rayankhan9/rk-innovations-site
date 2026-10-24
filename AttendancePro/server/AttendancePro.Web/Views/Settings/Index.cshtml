@@ -1,0 +1,50 @@
+@model SettingsVm
+@{ ViewData["Title"] = "Settings"; }
+<div class="page-h"><h1>Organization settings</h1></div>
+<div class="row g-3">
+<div class="col-lg-8">
+<form method="post" class="card-x">
+    <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+    <h2>Organization</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="Type" class="form-label"></label><select asp-for="Type" asp-items="Html.GetEnumSelectList<OrgType>()" class="form-select"></select></div>
+        <div class="col-md-6"><label class="form-label">Time zone</label><partial name="_TimeZones" model="Model.TimeZoneId" /></div>
+        <div class="col-md-6"><label asp-for="ContactEmail" class="form-label"></label><input asp-for="ContactEmail" class="form-control" /></div>
+    </div>
+    <h2>Attendance integrity</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6"><label asp-for="MaxAccuracyMeters" class="form-label">Max GPS error (m)</label><input asp-for="MaxAccuracyMeters" class="form-control" /><div class="form-text">Punches with worse accuracy are refused.</div></div>
+        <div class="col-md-6"><label asp-for="GeofenceToleranceMeters" class="form-label">Boundary tolerance (m)</label><input asp-for="GeofenceToleranceMeters" class="form-control" /><div class="form-text">Extra metres allowed outside the edge (GPS drift).</div></div>
+        <div class="col-md-6"><label asp-for="MaxClockDriftMinutes" class="form-label">Max phone clock error (min)</label><input asp-for="MaxClockDriftMinutes" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="MaxOfflineSyncHours" class="form-label">Accept offline punches up to (hours)</label><input asp-for="MaxOfflineSyncHours" class="form-control" /></div>
+        <div class="col-12 d-flex flex-column gap-1">
+            <label class="form-check"><input asp-for="BlockMockLocation" class="form-check-input" /> <span class="form-check-label">Block mock / fake GPS locations</span></label>
+            <label class="form-check"><input asp-for="RequireDeviceBinding" class="form-check-input" /> <span class="form-check-label">One phone per account (prevents buddy punching)</span></label>
+            <label class="form-check"><input asp-for="RequireSelfie" class="form-check-input" /> <span class="form-check-label">Require a selfie with every punch (stored privately; check your local privacy rules)</span></label>
+            <label class="form-check"><input asp-for="AutoCloseOpenSessions" class="form-check-input" /> <span class="form-check-label">Auto-close sessions left open overnight (flagged for review)</span></label>
+        </div>
+    </div>
+    <h2>Sign-up &amp; reports</h2>
+    <div class="d-flex flex-column gap-1 mb-4">
+        <label class="form-check"><input asp-for="RequireApproval" class="form-check-input" /> <span class="form-check-label">New sign-ups need admin approval</span></label>
+        <label class="form-check"><input asp-for="SendMonthlyReports" class="form-check-input" /> <span class="form-check-label">Email each member their monthly report on the 1st</span></label>
+        <label class="form-check"><input asp-for="SendAdminMonthlySummary" class="form-check-input" /> <span class="form-check-label">Email admins the organization summary</span></label>
+    </div>
+    <button class="btn btn-primary">Save settings</button>
+</form>
+</div>
+<div class="col-lg-4">
+    <div class="card-x mb-3">
+        <h2>Join code</h2>
+        <div class="display-6 fw-bold text-center" style="letter-spacing:.2em">@Model.Code</div>
+        <p class="small text-muted mt-2">Share this with your @(Model.Type == OrgType.Education ? "students and staff" : "team") together with the app download link. They enter it when registering.</p>
+        <form asp-action="RegenerateCode" method="post" onsubmit="return confirm('The old code will stop working. Continue?')"><button class="btn btn-sm btn-outline-warning">Generate new code</button></form>
+    </div>
+    <div class="card-x">
+        <h2>Email delivery</h2>
+        <p class="small text-muted">Configure SMTP in <code>appsettings.json</code> (<code>Smtp</code> section). Without it, emails are saved to <code>App_Data/outbox</code>.</p>
+        <form asp-action="TestEmail" method="post"><button class="btn btn-sm btn-outline-secondary">Send test email</button></form>
+    </div>
+</div>
+</div>

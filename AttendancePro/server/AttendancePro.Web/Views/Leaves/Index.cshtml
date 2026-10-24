@@ -1,0 +1,36 @@
+@model List<LeaveRequest>
+@{ ViewData["Title"] = "Leave requests"; }
+<div class="page-h"><h1>Leave requests</h1>
+    <div class="btn-group btn-group-sm">
+        <a class="btn btn-outline-secondary @(ViewBag.Status == null ? "active" : "")" asp-route-status="">All</a>
+        @foreach (var s in new[] { RequestStatus.Pending, RequestStatus.Approved, RequestStatus.Rejected }) {<a class="btn btn-outline-secondary @(ViewBag.Status == s ? "active" : "")" asp-route-status="@s">@s</a>}
+    </div></div>
+<div class="card-x p-0 table-responsive">
+<table class="table align-middle mb-0">
+    <thead><tr><th>Member</th><th>Type</th><th>Dates</th><th>Reason</th><th>Status</th><th style="width:300px"></th></tr></thead>
+    <tbody>
+    @foreach (var l in Model)
+    {
+        <tr>
+            <td><a asp-controller="Users" asp-action="Details" asp-route-id="@l.UserId" class="text-decoration-none">@l.User?.FullName</a></td>
+            <td>@l.Type</td>
+            <td>@l.FromDate.ToString("dd MMM") – @l.ToDate.ToString("dd MMM yyyy") <span class="text-muted small">(@(l.ToDate.DayNumber - l.FromDate.DayNumber + 1) d)</span></td>
+            <td class="small">@l.Reason</td>
+            <td><span class="pill @l.Status">@l.Status</span>@if (l.ReviewNote != null) {<div class="small text-muted">@l.ReviewNote</div>}</td>
+            <td>
+                @if (l.Status == RequestStatus.Pending)
+                {
+                    <form asp-action="Review" method="post" class="d-flex gap-1">
+                        <input type="hidden" name="id" value="@l.Id" />
+                        <input name="note" class="form-control form-control-sm" placeholder="Note (optional)" />
+                        <button name="approve" value="true" class="btn btn-sm btn-primary">Approve</button>
+                        <button name="approve" value="false" class="btn btn-sm btn-outline-danger">Reject</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    @if (Model.Count == 0) {<tr><td colspan="6" class="text-center text-muted py-4">Nothing here.</td></tr>}
+    </tbody>
+</table>
+</div>

@@ -1,0 +1,56 @@
+@using AttendancePro.Web.Services
+@model List<(ApplicationUser User, MonthSummary Summary)>
+@{
+    ViewData["Title"] = "Monthly report";
+    int y = (int)ViewBag.Year, m = (int)ViewBag.Month;
+    var first = new DateOnly(y, m, 1); var prev = first.AddMonths(-1); var next = first.AddMonths(1);
+    string dept = (string?)ViewBag.Dept ?? "";
+    double avg = Model.Count == 0 ? 0 : Math.Round(Model.Average(r => r.Summary.AttendancePercent), 1);
+}
+<div class="page-h">
+    <h1>Monthly report</h1>
+    <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-sm btn-outline-secondary" asp-route-year="@prev.Year" asp-route-month="@prev.Month" asp-route-dept="@dept">‹</a>
+        <strong>@first.ToString("MMMM yyyy")</strong>
+        <a class="btn btn-sm btn-outline-secondary" asp-route-year="@next.Year" asp-route-month="@next.Month" asp-route-dept="@dept">›</a>
+        <a class="btn btn-sm btn-outline-primary" asp-action="Csv" asp-route-year="@y" asp-route-month="@m" asp-route-dept="@dept">⭳ CSV</a>
+        <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">Print</button>
+    </div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3"><div class="kpi good"><div class="v">@avg%</div><div class="l">Average attendance</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi"><div class="v">@Model.Count</div><div class="l">Members</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi warn"><div class="v">@Model.Sum(r => r.Summary.LateDays)</div><div class="l">Late arrivals</div></div></div>
+    <div class="col-6 col-md-3"><div class="kpi bad"><div class="v">@Model.Sum(r => r.Summary.AbsentDays)</div><div class="l">Absent days</div></div></div>
+</div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+    <form method="get" class="d-flex gap-2"><input type="hidden" name="year" value="@y" /><input type="hidden" name="month" value="@m" />
+        <select name="dept" class="form-select form-select-sm" onchange="this.form.submit()"><option value="">All departments</option>@foreach (var d in (List<string?>)ViewBag.Departments) {<option selected="@(d == dept)">@d</option>}</select></form>
+    <form asp-action="SendNow" method="post" class="d-flex align-items-center gap-2" onsubmit="return confirm('Email this month\'s report to all members now?')">
+        <input type="hidden" name="year" value="@y" /><input type="hidden" name="month" value="@m" />
+        <span class="small text-muted">@ViewBag.LastSent report email(s) already sent for this month</span>
+        <button class="btn btn-sm btn-outline-primary" name="force" value="false">Send missing reports</button>
+        <button class="btn btn-sm btn-outline-secondary" name="force" value="true">Resend all</button>
+    </form>
+</div>
+<div class="card-x p-0 table-responsive">
+<table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Name</th><th>ID</th><th>Dept</th><th class="text-end">Working</th><th class="text-end">Present</th><th class="text-end">Half</th><th class="text-end">Absent</th><th class="text-end">Late</th><th class="text-end">Leave</th><th class="text-end">Hours</th><th style="width:150px">Attendance</th></tr></thead>
+    <tbody>
+    @foreach (var (u, s) in Model)
+    {
+        var cls = s.AttendancePercent >= 90 ? "bg-success" : s.AttendancePercent >= 75 ? "bg-warning" : "bg-danger";
+        <tr>
+            <td><a asp-controller="Users" asp-action="Details" asp-route-id="@u.Id" asp-route-year="@y" asp-route-month="@m" class="text-decoration-none">@u.FullName</a></td>
+            <td>@u.EmployeeCode</td><td>@u.Department</td>
+            <td class="text-end">@s.WorkingDays</td><td class="text-end">@s.PresentDays</td><td class="text-end">@s.HalfDays</td>
+            <td class="text-end @(s.AbsentDays > 0 ? "text-danger fw-semibold" : "")">@s.AbsentDays</td>
+            <td class="text-end">@s.LateDays</td><td class="text-end">@s.LeaveDays</td><td class="text-end">@s.TotalHours</td>
+            <td><div class="d-flex align-items-center gap-2"><div class="progress flex-grow-1" style="height:6px"><div class="progress-bar @cls" style="width:@s.AttendancePercent.ToString("0", System.Globalization.CultureInfo.InvariantCulture)%"></div></div><span class="small">@s.AttendancePercent%</span></div></td>
+        </tr>
+    }
+    @if (Model.Count == 0) {<tr><td colspan="11" class="text-center text-muted py-4">No active members.</td></tr>}
+    </tbody>
+</table>
+</div>
+<p class="small text-muted mt-3">Reports are emailed automatically to every member (and admin summary to admins) on the 1st of each month in your organization's time zone. Attendance % counts half days as 0.5 and excludes leave, holidays and weekly offs.</p>

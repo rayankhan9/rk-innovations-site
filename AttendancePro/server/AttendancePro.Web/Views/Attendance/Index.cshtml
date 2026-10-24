@@ -1,0 +1,48 @@
+@using AttendancePro.Web.Services
+@model List<AttendanceRecord>
+@{
+    ViewData["Title"] = "Attendance records";
+    var f = (AttendanceFilter)ViewBag.Filter;
+    var org = (Organization)ViewBag.Org;
+    var users = (List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Users;
+    var sites = (List<Site>)ViewBag.Sites;
+}
+<div class="page-h"><h1>Attendance records</h1>
+    <div><a asp-action="Manual" class="btn btn-sm btn-outline-primary">+ Manual entry</a>
+    <a asp-action="Export" asp-route-from="@f.From?.ToString("yyyy-MM-dd")" asp-route-to="@f.To?.ToString("yyyy-MM-dd")" asp-route-userId="@f.UserId" asp-route-siteId="@f.SiteId" asp-route-flaggedOnly="@f.FlaggedOnly" class="btn btn-sm btn-outline-secondary">⭳ CSV</a></div></div>
+<form method="get" class="card-x row g-2 mb-3 align-items-end">
+    <div class="col-6 col-md-2"><label class="form-label small">From</label><input type="date" name="from" value="@f.From?.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+    <div class="col-6 col-md-2"><label class="form-label small">To</label><input type="date" name="to" value="@f.To?.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+    <div class="col-md-3"><label class="form-label small">Member</label><select name="userId" class="form-select form-select-sm"><option value="">Everyone</option>@foreach (var u in users) {<option value="@u.Value" selected="@(u.Value == f.UserId)">@u.Text</option>}</select></div>
+    <div class="col-md-2"><label class="form-label small">Location</label><select name="siteId" class="form-select form-select-sm"><option value="">All</option>@foreach (var s in sites) {<option value="@s.Id" selected="@(s.Id == f.SiteId)">@s.Name</option>}</select></div>
+    <div class="col-auto"><label class="form-check small"><input type="checkbox" class="form-check-input" name="flaggedOnly" value="true" checked="@f.FlaggedOnly" /> Flagged only</label></div>
+    <div class="col-auto"><button class="btn btn-sm btn-primary">Apply</button></div>
+</form>
+<div class="card-x p-0 table-responsive">
+<table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Date</th><th>Member</th><th>Location</th><th>In</th><th>Out</th><th>Hours</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var a in Model)
+    {
+        <tr>
+            <td>@a.WorkDate.ToString("dd MMM yyyy")</td>
+            <td><a asp-controller="Users" asp-action="Details" asp-route-id="@a.UserId" class="text-decoration-none">@a.User?.FullName</a></td>
+            <td>@a.Site?.Name</td>
+            <td>@OrgTime.ToLocal(a.CheckInUtc, org).ToString("HH:mm")</td>
+            <td>@(a.CheckOutUtc == null ? "—" : OrgTime.ToLocal(a.CheckOutUtc.Value, org).ToString("HH:mm"))</td>
+            <td>@a.WorkedHours.ToString("0.0")</td>
+            <td>
+                @if (a.CheckOutUtc == null) {<span class="pill Present">In</span>}
+                @if (a.IsLate) {<span class="pill Late">Late @(a.LateMinutes)m</span>}
+                @if (a.IsFlagged) {<span class="pill flag" title="@a.FlagReason">⚑ Flagged</span>}
+                @if (a.Source != PunchSource.Mobile) {<span class="pill Leave">@a.Source</span>}
+                @if (a.IsOfflineSync) {<span class="pill Leave">Offline</span>}
+            </td>
+            <td class="text-end"><a asp-action="Details" asp-route-id="@a.Id" class="btn btn-sm btn-outline-secondary">Open</a></td>
+        </tr>
+    }
+    @if (Model.Count == 0) {<tr><td colspan="8" class="text-center text-muted py-4">No records for these filters.</td></tr>}
+    </tbody>
+</table>
+</div>
+<partial name="_Pager" model="((int)f.Page, (int)ViewBag.Total, (int)ViewBag.PageSize)" />

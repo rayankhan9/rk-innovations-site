@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AttendancePro.Tests/AttendancePro.Tests.csproj" />
+  <Project Path="AttendancePro.Web/AttendancePro.Web.csproj" />
+</Solution>

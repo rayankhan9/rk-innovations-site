@@ -1,0 +1,71 @@
+@using AttendancePro.Web.Services
+@model AttendanceRecord
+@{
+    ViewData["Title"] = "Attendance detail";
+    var org = (Organization)ViewBag.Org;
+}
+@section Head { <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" /> }
+<div class="page-h">
+    <h1>@Model.User?.FullName <small class="text-muted fs-6">@Model.WorkDate.ToString("dddd, dd MMM yyyy")</small></h1>
+    <div class="d-flex gap-2">
+        <a asp-action="Manual" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary">Edit times</a>
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Delete this record?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+    </div>
+</div>
+@if (Model.IsFlagged)
+{
+    <div class="alert alert-danger d-flex justify-content-between align-items-center"><div><strong>⚑ Flagged for review:</strong> @Model.FlagReason</div>
+        <form asp-action="Clear" asp-route-id="@Model.Id" method="post"><button class="btn btn-sm btn-outline-danger">Mark as reviewed</button></form></div>
+}
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card-x mb-3">
+            <table class="table table-sm mb-0">
+                <tr><th>Location</th><td>@Model.Site?.Name</td></tr>
+                <tr><th>Sign in</th><td>@OrgTime.ToLocal(Model.CheckInUtc, org).ToString("dd MMM yyyy HH:mm:ss") @if (Model.IsLate) {<span class="pill Late">@Model.LateMinutes min late</span>}</td></tr>
+                <tr><th>Sign out</th><td>@(Model.CheckOutUtc == null ? "Still signed in" : OrgTime.ToLocal(Model.CheckOutUtc.Value, org).ToString("dd MMM yyyy HH:mm:ss"))</td></tr>
+                <tr><th>Worked</th><td>@Model.WorkedHours.ToString("0.00") h</td></tr>
+                <tr><th>In — GPS</th><td>@Model.InLat?.ToString("0.00000"), @Model.InLng?.ToString("0.00000") <span class="text-muted small">±@Model.InAccuracy?.ToString("0") m · @Model.InDistanceMeters?.ToString("0") m from boundary</span></td></tr>
+                @if (Model.OutLat != null) {<tr><th>Out — GPS</th><td>@Model.OutLat?.ToString("0.00000"), @Model.OutLng?.ToString("0.00000") <span class="text-muted small">±@Model.OutAccuracy?.ToString("0") m</span></td></tr>}
+                <tr><th>Source</th><td>@Model.Source @(Model.IsOfflineSync ? "(captured offline)" : "")</td></tr>
+                @if (!string.IsNullOrEmpty(Model.Notes)) {<tr><th>Notes</th><td>@Model.Notes</td></tr>}
+            </table>
+        </div>
+        @if (Model.InSelfie != null || Model.OutSelfie != null)
+        {
+            <div class="card-x"><h2>Selfies</h2><div class="d-flex gap-3">
+                @if (Model.InSelfie != null) {<div><img class="selfie" src="@Url.Action("Selfie", new { id = Model.Id, outPunch = false })" /><div class="small text-muted">Sign in</div></div>}
+                @if (Model.OutSelfie != null) {<div><img class="selfie" src="@Url.Action("Selfie", new { id = Model.Id, outPunch = true })" /><div class="small text-muted">Sign out</div></div>}
+            </div></div>
+        }
+    </div>
+    <div class="col-lg-7"><div id="map"></div></div>
+</div>
+@section Scripts {
+<script src="~/lib/leaflet/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([0, 0], 2);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  const group = [];
+  @if (Model.Site != null)
+  {
+      if (Model.Site.Shape == SiteShape.Circle)
+      {
+        <text>group.push(L.circle([@Model.Site.CenterLat.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.Site.CenterLng.ToString(System.Globalization.CultureInfo.InvariantCulture)], { radius: @Model.Site.RadiusMeters.ToString(System.Globalization.CultureInfo.InvariantCulture), color: '#0f766e', fillOpacity: .12 }).addTo(map));</text>
+      }
+      else
+      {
+        <text>group.push(L.polygon(@Html.Raw(Model.Site.PolygonJson ?? "[]"), { color: '#0f766e', fillOpacity: .12 }).addTo(map));</text>
+      }
+  }
+  @if (Model.InLat != null)
+  {
+      <text>group.push(L.circleMarker([@Model.InLat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.InLng!.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)], { color: '#047857', radius: 8 }).addTo(map).bindTooltip('Sign in'));</text>
+  }
+  @if (Model.OutLat != null)
+  {
+      <text>group.push(L.circleMarker([@Model.OutLat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.OutLng!.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)], { color: '#b91c1c', radius: 8 }).addTo(map).bindTooltip('Sign out'));</text>
+  }
+  if (group.length) map.fitBounds(L.featureGroup(group).getBounds().pad(.3));
+</script>
+}

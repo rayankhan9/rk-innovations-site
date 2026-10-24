@@ -1,0 +1,46 @@
+@model List<Site>
+@{ ViewData["Title"] = "Locations"; var counts = (Dictionary<int, int>)ViewBag.Counts; }
+@section Head { <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" /> }
+<div class="page-h"><h1>Attendance locations</h1><a asp-action="Create" class="btn btn-primary btn-sm">+ Add location</a></div>
+<p class="text-muted">Members can sign in and out only while physically inside one of these boundaries. Verification happens on the server, not just in the app.</p>
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card-x p-0 table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead><tr><th>Name</th><th>Boundary</th><th>Assigned</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr class="@(s.IsActive ? "" : "text-muted")">
+                        <td><a href="#" onclick="focusSite(@s.Id);return false" class="fw-semibold text-decoration-none">@s.Name</a>@if (!s.IsActive) {<span class="badge text-bg-secondary ms-1">inactive</span>}<div class="small text-muted">@s.Address</div></td>
+                        <td>@(s.Shape == SiteShape.Circle ? $"{s.RadiusMeters:0} m radius" : "Custom shape")</td>
+                        <td>@(counts.TryGetValue(s.Id, out var n) ? n + " users" : "everyone")</td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@s.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this location?')"><button class="btn btn-sm btn-outline-danger">✕</button></form>
+                        </td>
+                    </tr>
+                }
+                @if (Model.Count == 0) {<tr><td colspan="4" class="text-center text-muted py-4">No locations yet. Add your first one — nobody can sign in until you do.</td></tr>}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-7"><div id="map"></div></div>
+</div>
+@section Scripts {
+<script src="~/lib/leaflet/leaflet.js"></script>
+<script>
+  const sites = @Json.Serialize(Model.Select(s => new { s.Id, s.Name, s.IsActive, shape = s.Shape.ToString(), lat = s.CenterLat, lng = s.CenterLng, r = s.RadiusMeters, poly = s.PolygonJson }));
+  const map = L.map('map').setView([20.59, 78.96], 5);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  const layers = {}; const all = [];
+  sites.forEach(s => {
+    const style = { color: s.IsActive ? '#0f766e' : '#9ca3af', fillOpacity: .15 };
+    const l = s.shape === 'Circle' ? L.circle([s.lat, s.lng], { radius: s.r, ...style }) : L.polygon(JSON.parse(s.poly || '[]'), style);
+    l.addTo(map).bindTooltip(s.Name); layers[s.Id] = l; all.push(l);
+  });
+  if (all.length) map.fitBounds(L.featureGroup(all).getBounds().pad(.3));
+  function focusSite(id) { map.fitBounds(layers[id].getBounds().pad(.4)); }
+</script>
+}

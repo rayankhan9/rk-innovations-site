@@ -1,0 +1,50 @@
+@model Site
+@{ ViewData["Title"] = Model.Id == 0 ? "New location" : "Edit location"; }
+@section Head { <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" /> }
+<div class="page-h"><h1>@ViewData["Title"]</h1></div>
+<form method="post" class="row g-3">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CenterLat" id="lat" />
+    <input type="hidden" asp-for="CenterLng" id="lng" />
+    <input type="hidden" asp-for="PolygonJson" id="poly" />
+    <div class="col-lg-4">
+        <div class="card-x">
+            <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+            <div class="mb-3"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" placeholder="Main campus" /></div>
+            <div class="mb-3"><label asp-for="Address" class="form-label"></label><input asp-for="Address" class="form-control" /></div>
+            <div class="mb-3">
+                <label class="form-label">Boundary type</label>
+                <div class="btn-group w-100">
+                    <input type="radio" class="btn-check" name="Shape" id="shC" value="Circle" checked="@(Model.Shape == SiteShape.Circle)"><label class="btn btn-outline-primary" for="shC">Circle (radius)</label>
+                    <input type="radio" class="btn-check" name="Shape" id="shP" value="Polygon" checked="@(Model.Shape == SiteShape.Polygon)"><label class="btn btn-outline-primary" for="shP">Custom shape</label>
+                </div>
+            </div>
+            <div id="circleOpts" class="mb-3">
+                <label asp-for="RadiusMeters" class="form-label">Radius: <b id="rv">@Model.RadiusMeters</b> m</label>
+                <input type="range" min="20" max="2000" step="10" class="form-range" asp-for="RadiusMeters" id="radius" />
+                <div class="form-text">Click the map to place the centre. Tip: 100–200 m suits a single building, 300–800 m a campus.</div>
+            </div>
+            <div id="polyOpts" class="mb-3 d-none">
+                <div class="form-text mb-2">Click the map to add corners (min. 3) around the allowed area.</div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="undo">Undo point</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="clear">Clear</button>
+            </div>
+            <div class="form-check form-switch mb-3"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label">Active</label></div>
+            <button class="btn btn-primary">Save location</button> <a asp-action="Index" class="btn btn-link">Cancel</a>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="input-group mb-2">
+            <input id="q" class="form-control" placeholder="Search an address or place (OpenStreetMap)" />
+            <button type="button" class="btn btn-outline-secondary" id="go">Search</button>
+            <button type="button" class="btn btn-outline-secondary" id="here">📍 My location</button>
+        </div>
+        <div id="map"></div>
+        <div class="form-text">Map data © OpenStreetMap contributors. Employees can only sign in/out while inside this boundary.</div>
+    </div>
+</form>
+@section Scripts {
+<script src="~/lib/leaflet/leaflet.js"></script>
+<script src="~/js/site-editor.js"></script>
+<partial name="_ValidationScriptsPartial" />
+}
