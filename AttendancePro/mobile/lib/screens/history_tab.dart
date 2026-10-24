@@ -15,7 +15,7 @@ class HistoryTab extends StatefulWidget {
 }
 
 class _HistoryTabState extends State<HistoryTab> {
-  DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
+  DateTime _month = DateTime(OrgClock.now().year, OrgClock.now().month);
   late Future<List<HistoryItem>> _f;
 
   @override

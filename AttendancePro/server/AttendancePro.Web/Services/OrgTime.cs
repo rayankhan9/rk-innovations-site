@@ -13,7 +13,7 @@ public static class OrgTime
     public static DateTime ToLocal(DateTime utc, Organization org) =>
         TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), Zone(org));
 
-    public static DateOnly Today(Organization org) => DateOnly.FromDateTime(ToLocal(DateTime.UtcNow, org));
+    public static DateOnly Today(Organization org) => DateOnly.FromDateTime(ToLocal(Clock.UtcNow, org));
 
     public static DateTime LocalToUtc(DateOnly d, TimeSpan t, Organization org)
     {

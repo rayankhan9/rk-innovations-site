@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models.dart';
 
 /// Punches captured with no connectivity. They keep the device timestamp and are replayed (idempotently,
 /// via eventId) when the network returns. The server re-validates location, time window and device.
@@ -35,6 +36,6 @@ class OfflineQueue {
 
   DateTime? get lastTime {
     final l = all();
-    return l.isEmpty ? null : DateTime.parse(l.last['clientTimeUtc']).toLocal();
+    return l.isEmpty ? null : OrgClock.toOrg(DateTime.parse(l.last['clientTimeUtc']));
   }
 }

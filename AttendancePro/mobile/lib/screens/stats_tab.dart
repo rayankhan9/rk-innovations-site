@@ -16,7 +16,7 @@ class StatsTab extends StatefulWidget {
 }
 
 class _StatsTabState extends State<StatsTab> {
-  DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
+  DateTime _month = DateTime(OrgClock.now().year, OrgClock.now().month);
   late Future<MonthStats> _f;
 
   @override

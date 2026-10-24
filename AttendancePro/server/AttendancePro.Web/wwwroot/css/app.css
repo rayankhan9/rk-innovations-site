@@ -38,3 +38,6 @@ a{color:var(--brand)}
 .selfie{max-width:160px;border-radius:8px;border:1px solid var(--line)}
 @media(max-width:991px){.sidebar{position:fixed;left:-250px;z-index:1000;transition:left .2s}.sidebar.open{left:0}.content{padding:16px}}
 @media print{.sidebar,.btn,form{display:none!important}.content{padding:0}}
+
+.brand{display:flex;align-items:center;gap:8px}.brand-logo{width:30px;height:30px;border-radius:8px}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:4px}.auth-logo img{width:44px;height:44px;border-radius:11px}.auth-logo h1{margin:0}

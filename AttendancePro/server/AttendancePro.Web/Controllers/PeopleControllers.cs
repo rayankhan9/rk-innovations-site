@@ -320,7 +320,7 @@ public class HolidaysController : AdminController
 
     public async Task<IActionResult> Index(int? year)
     {
-        int y = year ?? DateTime.UtcNow.Year; ViewBag.Year = y;
+        int y = year ?? Clock.UtcNow.Year; ViewBag.Year = y;
         return View(await Db.Holidays.Where(h => h.Date.Year == y).OrderBy(h => h.Date).ToListAsync());
     }
 

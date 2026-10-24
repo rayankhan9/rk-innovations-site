@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../models.dart';
 
 class MonthBar extends StatelessWidget {
   final DateTime month;
@@ -8,7 +9,7 @@ class MonthBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    final now = OrgClock.now();
     final isCurrent = month.year == now.year && month.month == now.month;
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),

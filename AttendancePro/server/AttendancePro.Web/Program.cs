@@ -14,6 +14,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var cfg = builder.Configuration;
+if (cfg.GetValue<double?>("Demo:ClockOffsetHours") is { } demoOffset && demoOffset != 0)
+{
+    Clock.Offset = TimeSpan.FromHours(demoOffset); // staging aid for demo data/screenshots ONLY
+    Console.WriteLine($"WARNING: demo clock offset of {demoOffset} h is active. Never use this in production.");
+}
 
 // ---------------------------------------------------------------- data
 builder.Services.AddHttpContextAccessor();
@@ -105,6 +110,7 @@ Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "App_Dat
 using (var scope = app.Services.CreateScope())
 {
     await Seeder.InitializeAsync(scope.ServiceProvider, cfg, app.Environment);
+    if (cfg.GetValue<bool>("Seed:SampleData")) await DemoData.SeedAsync(scope.ServiceProvider);
 }
 
 app.UseForwardedHeaders();

@@ -33,7 +33,7 @@ public static class ApiMap
     {
         id = u.Id, fullName = u.FullName, email = u.Email, employeeCode = u.EmployeeCode, department = u.Department,
         designation = u.Designation, status = u.Status.ToString(),
-        org = new { name = o.Name, type = o.Type.ToString(), code = o.Code, memberLabel = o.MemberLabel, timeZone = o.TimeZoneId }
+        org = new { name = o.Name, type = o.Type.ToString(), code = o.Code, memberLabel = o.MemberLabel, timeZone = o.TimeZoneId, utcOffsetMinutes = (int)OrgTime.Zone(o).GetUtcOffset(Clock.UtcNow).TotalMinutes }
     };
 }
 
@@ -111,7 +111,7 @@ public class AuthApiController : ControllerBase
             return StatusCode(403, new { code = "DEVICE_MISMATCH", message = "This account is linked to another phone. Ask your administrator to reset your device." });
         if (org.RequireDeviceBinding && string.IsNullOrEmpty(user.DeviceId) && !string.IsNullOrEmpty(dto.DeviceId))
         { user.DeviceId = dto.DeviceId; user.DeviceModel = dto.DeviceModel; }
-        user.LastLoginUtc = DateTime.UtcNow;
+        user.LastLoginUtc = Clock.UtcNow;
         await _users.UpdateAsync(user);
         return Ok(new { tokens = await _tokens.IssueAsync(user), user = ApiMap.User(user, org) });
     }
@@ -136,7 +136,7 @@ public class AuthApiController : ControllerBase
         {
             var code = RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
             user.ResetCodeHash = HashCode(user.Id, code);
-            user.ResetCodeExpiresUtc = DateTime.UtcNow.AddMinutes(15);
+            user.ResetCodeExpiresUtc = Clock.UtcNow.AddMinutes(15);
             user.ResetAttempts = 0;
             await _users.UpdateAsync(user);
             await _mail.SendAsync(user.Email!, "Your password reset code",
@@ -150,7 +150,7 @@ public class AuthApiController : ControllerBase
     {
         var user = await _users.FindByEmailAsync(dto.Email.Trim());
         var bad = BadRequest(new { code = "BAD_CODE", message = "Invalid or expired code." });
-        if (user?.ResetCodeHash is null || user.ResetCodeExpiresUtc < DateTime.UtcNow || user.ResetAttempts >= 5) return bad;
+        if (user?.ResetCodeHash is null || user.ResetCodeExpiresUtc < Clock.UtcNow || user.ResetAttempts >= 5) return bad;
         user.ResetAttempts++;
         if (!CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(user.ResetCodeHash), Encoding.UTF8.GetBytes(HashCode(user.Id, dto.Code.Trim()))))
         { await _users.UpdateAsync(user); return bad; }

@@ -45,7 +45,7 @@ class _LeaveListState extends State<_LeaveList> {
   Future<void> _apply() async {
     final api = context.read<AppState>().api;
     String type = 'Casual';
-    DateTime from = DateTime.now(), to = DateTime.now();
+    DateTime from = OrgClock.now(), to = OrgClock.now();
     final reason = TextEditingController();
     final ok = await showModalBottomSheet<bool>(
       context: context,
@@ -66,12 +66,12 @@ class _LeaveListState extends State<_LeaveList> {
             const SizedBox(height: 12),
             Row(children: [
               Expanded(child: OutlinedButton.icon(icon: const Icon(Icons.calendar_today, size: 16), label: Text('From ${DateFormat('d MMM').format(from)}'), onPressed: () async {
-                final p = await showDatePicker(context: c, initialDate: from, firstDate: DateTime.now().subtract(const Duration(days: 30)), lastDate: DateTime.now().add(const Duration(days: 365)));
+                final p = await showDatePicker(context: c, initialDate: from, firstDate: OrgClock.now().subtract(const Duration(days: 30)), lastDate: OrgClock.now().add(const Duration(days: 365)));
                 if (p != null) set(() { from = p; if (to.isBefore(from)) to = from; });
               })),
               const SizedBox(width: 10),
               Expanded(child: OutlinedButton.icon(icon: const Icon(Icons.event, size: 16), label: Text('To ${DateFormat('d MMM').format(to)}'), onPressed: () async {
-                final p = await showDatePicker(context: c, initialDate: to, firstDate: from, lastDate: DateTime.now().add(const Duration(days: 365)));
+                final p = await showDatePicker(context: c, initialDate: to, firstDate: from, lastDate: OrgClock.now().add(const Duration(days: 365)));
                 if (p != null) set(() => to = p);
               })),
             ]),
@@ -162,7 +162,7 @@ class _RegListState extends State<_RegList> {
 
   Future<void> _create() async {
     final api = context.read<AppState>().api;
-    DateTime date = DateTime.now();
+    DateTime date = OrgClock.now();
     TimeOfDay? tin, tout;
     final reason = TextEditingController();
     String fmt(TimeOfDay? t) => t == null ? '—' : '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
@@ -179,7 +179,7 @@ class _RegListState extends State<_RegList> {
             const Text('Forgot to sign out, or your phone died? Tell your administrator what the times should be.', style: TextStyle(fontSize: 13)),
             const SizedBox(height: 14),
             OutlinedButton.icon(icon: const Icon(Icons.calendar_today, size: 16), label: Text(DateFormat('EEE, d MMM yyyy').format(date)), onPressed: () async {
-              final p = await showDatePicker(context: c, initialDate: date, firstDate: DateTime.now().subtract(const Duration(days: 31)), lastDate: DateTime.now());
+              final p = await showDatePicker(context: c, initialDate: date, firstDate: OrgClock.now().subtract(const Duration(days: 31)), lastDate: OrgClock.now());
               if (p != null) set(() => date = p);
             }),
             const SizedBox(height: 10),

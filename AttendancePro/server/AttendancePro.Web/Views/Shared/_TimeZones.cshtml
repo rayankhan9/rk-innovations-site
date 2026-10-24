@@ -1,7 +1,12 @@
 @model string
+@{
+    // Windows lists its own zone ids ("India Standard Time"); resolve IANA ids ("Asia/Kolkata") to the matching entry.
+    string selected = Model;
+    try { selected = TimeZoneInfo.FindSystemTimeZoneById(Model).Id; } catch { }
+}
 <select name="TimeZoneId" class="form-select">
     @foreach (var z in TimeZoneInfo.GetSystemTimeZones().OrderBy(z => z.BaseUtcOffset).ThenBy(z => z.DisplayName))
     {
-        <option value="@z.Id" selected="@(z.Id == Model)">@z.DisplayName</option>
+        <option value="@z.Id" selected="@(z.Id == selected)">@z.DisplayName</option>
     }
 </select>

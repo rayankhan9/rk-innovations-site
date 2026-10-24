@@ -2,14 +2,27 @@ import 'dart:math' as math;
 
 import 'package:latlong2/latlong.dart';
 
-DateTime? _dt(dynamic v) => v == null ? null : DateTime.parse(v as String).toLocal();
+/// Times are shown in the organization's time zone (not the phone's), corrected by the server's clock.
+class OrgClock {
+  static Duration offset = Duration.zero; // org UTC offset
+  static Duration skew = Duration.zero; // server time minus device time
+  static DateTime toOrg(DateTime utc) => utc.toUtc().add(offset);
+  static DateTime now() => DateTime.now().toUtc().add(skew).add(offset);
+}
+
+DateTime? _dt(dynamic v) => v == null ? null : OrgClock.toOrg(DateTime.parse(v as String));
 double _d(dynamic v) => (v as num?)?.toDouble() ?? 0;
 int _i(dynamic v) => (v as num?)?.toInt() ?? 0;
 
 class OrgInfo {
   final String name, type, code, memberLabel, timeZone;
   OrgInfo({required this.name, required this.type, required this.code, required this.memberLabel, required this.timeZone});
-  factory OrgInfo.fromJson(Map<String, dynamic> j) => OrgInfo(
+  factory OrgInfo.fromJson(Map<String, dynamic> j) {
+    OrgClock.offset = Duration(minutes: _i(j['utcOffsetMinutes']));
+    return _orgFrom(j);
+  }
+
+  static OrgInfo _orgFrom(Map<String, dynamic> j) => OrgInfo(
       name: j['name'] ?? '', type: j['type'] ?? '', code: j['code'] ?? '', memberLabel: j['memberLabel'] ?? 'Member', timeZone: j['timeZone'] ?? 'UTC');
 }
 
@@ -122,10 +135,12 @@ class HomeData {
 
   factory HomeData.fromJson(Map<String, dynamic> j) {
     final server = DateTime.parse(j['serverTimeUtc']).toUtc();
+    final user = UserProfile.fromJson(j['user']); // sets the org time offset before any time is parsed
+    OrgClock.skew = server.difference(DateTime.now().toUtc());
     final o = j['openSession'] as Map<String, dynamic>?;
     final t = j['today'] as Map<String, dynamic>;
     return HomeData(
-      user: UserProfile.fromJson(j['user']),
+      user: user,
       policy: Policy.fromJson(j['policy']),
       shift: ShiftInfo.fromJson(j['shift']),
       sites: (j['sites'] as List).map((s) => GeoSite.fromJson(s)).toList(),

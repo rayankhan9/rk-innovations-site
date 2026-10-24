@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Android adaptive foreground: artwork kept inside the central safe zone -->
+  <g transform="translate(256 262) scale(.74) translate(-256 -262)">
+    <circle cx="256" cy="286" r="186" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="8" stroke-dasharray="3 22" stroke-linecap="round"/>
+    <circle cx="256" cy="286" r="132" fill="#fff" fill-opacity=".12" stroke="#fff" stroke-opacity=".5" stroke-width="6"/>
+    <path d="M256 92c-58 0-104 46-104 104 0 74 104 178 104 178s104-104 104-178c0-58-46-104-104-104z" fill="#fff"/>
+    <circle cx="256" cy="196" r="58" fill="#0F766E"/>
+    <path d="M229 197l19 20 38-42" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -64,7 +64,7 @@ public class AttendanceService
             return Fail("BAD_LOCATION", "Invalid location.");
 
         // 4. Trusted time: online punches use the server clock; offline punches are bounded.
-        var now = DateTime.UtcNow;
+        var now = Clock.UtcNow;
         DateTime when = now;
         string? flag = null;
         if (r.Offline)

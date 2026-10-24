@@ -89,3 +89,6 @@ Punch rejections come back as `200 { ok:false, code, message }` with codes such 
 - Push notifications (Firebase) and iOS are not included. The Flutter code is portable to iOS; add the location usage strings and Apple signing.
 - The Android app has been run on a Samsung Galaxy A32 (register, live map, sign in/out, outside-area state, offline queue + sync, stats, history, leave and correction requests). The selfie/camera flow, mock-location detection, device-binding rejection and the emailed monthly report on a real SMTP server have not been exercised on hardware yet.
 - Selfie capture / storing photos and location history are personal data in many jurisdictions (GDPR, DPDP, etc.): make sure your organization has a lawful basis, retention policy and employee/student/guardian notice.
+
+## Sample data for demos & screenshots
+`Seed__SampleData=true` creates "Greenfield Institute" (join code `GREEN1`): 24 members, 45 days of history, leave, corrections, flagged punches, holidays and an audit trail. Admin `admin@greenfield.edu` / `Admin#12345`, member `priya.sharma@greenfield.edu` / `Demo#12345`. Logos and store assets live in `branding/` and `marketing/` (see `marketing/README.md`).

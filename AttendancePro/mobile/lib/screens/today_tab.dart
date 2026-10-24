@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -9,6 +11,7 @@ import '../services/location_service.dart';
 import '../state/app_state.dart';
 import '../state/home_controller.dart';
 import '../widgets/common.dart';
+import '../models.dart';
 
 class TodayTab extends StatefulWidget {
   const TodayTab({super.key});
@@ -40,6 +43,26 @@ class _TodayTabState extends State<TodayTab> {
     if (r.code == 'DEVICE_MISMATCH' || r.code == 'ACCOUNT_INACTIVE') context.read<AppState>().refreshUser();
   }
 
+  /// Frames the allowed area (and the user) so the geofence is always visible.
+  void _fit(HomeController h) {
+    final site = h.nearest ?? (h.data?.sites.isNotEmpty == true ? h.data!.sites.first : null);
+    if (site == null) {
+      final f = _focus(h);
+      if (f != null) _map.move(f, 17);
+      return;
+    }
+    final pts = <LatLng>[];
+    if (site.isPolygon && site.polygon.length >= 3) {
+      pts.addAll(site.polygon);
+    } else {
+      final dLat = site.radius / 111320.0;
+      final dLng = site.radius / (111320.0 * cos(site.center.latitude * pi / 180));
+      pts.addAll([LatLng(site.center.latitude - dLat, site.center.longitude - dLng), LatLng(site.center.latitude + dLat, site.center.longitude + dLng)]);
+    }
+    if (h.pos != null && (h.inside || (h.nearestDist ?? 9e9) < 1500)) pts.add(LatLng(h.pos!.latitude, h.pos!.longitude));
+    _map.fitCamera(CameraFit.bounds(bounds: LatLngBounds.fromPoints(pts), padding: const EdgeInsets.all(28), maxZoom: 17.5));
+  }
+
   LatLng? _focus(HomeController h) {
     if (h.pos != null) return LatLng(h.pos!.latitude, h.pos!.longitude);
     return h.data?.sites.isNotEmpty == true ? h.data!.sites.first.center : null;
@@ -58,7 +81,7 @@ class _TodayTabState extends State<TodayTab> {
     // Follow the first GPS fix once the map is ready.
     if (_mapReady && !_followed && h.pos != null) {
       _followed = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => _map.move(LatLng(h.pos!.latitude, h.pos!.longitude), 17));
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fit(h));
     }
 
     return RefreshIndicator(
@@ -136,10 +159,7 @@ class _TodayTabState extends State<TodayTab> {
                   top: 8,
                   child: FloatingActionButton.small(
                     heroTag: 'recenter',
-                    onPressed: () {
-                      final f = _focus(h);
-                      if (f != null) _map.move(f, 17);
-                    },
+                    onPressed: () => _fit(h),
                     child: const Icon(Icons.my_location),
                   ),
                 ),
@@ -162,7 +182,7 @@ class _TodayTabState extends State<TodayTab> {
                   dense: true,
                   leading: Icon(s.checkOut == null ? Icons.timelapse : Icons.check_circle, color: s.checkOut == null ? Colors.orange : const Color(0xFF059669)),
                   title: Text('${fmtTime.format(s.checkIn)} → ${s.checkOut == null ? 'now' : fmtTime.format(s.checkOut!)}'),
-                  subtitle: Text(fmtDuration((s.checkOut ?? DateTime.now()).difference(s.checkIn))),
+                  subtitle: Text(fmtDuration((s.checkOut ?? OrgClock.now()).difference(s.checkIn))),
                   trailing: s.late ? const StatusPill('Late') : null,
                 ),
               ),

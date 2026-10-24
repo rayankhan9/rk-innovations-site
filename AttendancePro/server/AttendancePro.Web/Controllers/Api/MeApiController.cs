@@ -79,7 +79,7 @@ public class MeApiController : ControllerBase
         var siteNames = sites.ToDictionary(s => s.Id, s => s.Name);
         return Ok(new
         {
-            serverTimeUtc = DateTime.UtcNow,
+            serverTimeUtc = Clock.UtcNow,
             user = ApiMap.User(user, org),
             policy = new
             {
@@ -97,7 +97,7 @@ public class MeApiController : ControllerBase
             today = new
             {
                 date = today.ToString("yyyy-MM-dd"),
-                hours = Math.Round(todays.Sum(t => t.CheckOutUtc != null ? t.WorkedHours : (DateTime.UtcNow - t.CheckInUtc).TotalHours), 2),
+                hours = Math.Round(todays.Sum(t => t.CheckOutUtc != null ? t.WorkedHours : (Clock.UtcNow - t.CheckInUtc).TotalHours), 2),
                 sessions = todays.Select(t => new { checkInUtc = t.CheckInUtc, checkOutUtc = t.CheckOutUtc, t.IsLate })
             }
         });
@@ -215,7 +215,7 @@ public class MeApiController : ControllerBase
     [HttpGet("holidays")]
     public async Task<IActionResult> Holidays(int? year)
     {
-        int y = year ?? DateTime.UtcNow.Year;
+        int y = year ?? Clock.UtcNow.Year;
         var list = await _db.Holidays.AsNoTracking().Where(h => h.Date.Year == y).OrderBy(h => h.Date).ToListAsync();
         return Ok(list.Select(h => new { date = h.Date.ToString("yyyy-MM-dd"), h.Name }));
     }

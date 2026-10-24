@@ -1,7 +1,7 @@
 @model LoginVm
 @{ ViewData["Title"] = "Sign in"; }
 <div class="auth-card">
-    <h1>⌖ AttendancePro</h1>
+    <div class="auth-logo"><img src="~/img/logo.svg" alt="" /><h1>AttendancePro</h1></div>
     <p class="text-muted">Admin portal sign in</p>
     <form method="post">
         <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />

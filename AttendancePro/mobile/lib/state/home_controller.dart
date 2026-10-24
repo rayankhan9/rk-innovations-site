@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
 
+import '../config.dart';
 import '../models.dart';
 import '../services/api.dart';
 import '../services/location_service.dart';
@@ -33,14 +34,14 @@ class HomeController extends ChangeNotifier {
   StreamSubscription<Position>? _posSub;
   StreamSubscription<List<ConnectivityResult>>? _netSub;
   Timer? _tick;
-  DateTime now = DateTime.now();
+  DateTime now = OrgClock.now();
 
   Future<void> start() async {
     pending = app.queue.length;
     await load();
     await startLocation();
     _tick = Timer.periodic(const Duration(seconds: 30), (_) {
-      now = DateTime.now();
+      now = OrgClock.now();
       if (app.queue.length > 0) syncPending(); // retry queued punches even if the network never "changed"
       notifyListeners();
     });
@@ -62,6 +63,7 @@ class HomeController extends ChangeNotifier {
       final raw = await app.api.homeRaw();
       await app.prefs.setString('home_cache', jsonEncode(raw));
       data = HomeData.fromJson(raw);
+      now = OrgClock.now();
       offlineData = false;
       error = null;
       if (data!.user.status != app.user?.status) app.refreshUser();
@@ -90,7 +92,7 @@ class HomeController extends ChangeNotifier {
       notifyListeners();
     }, onError: (_) {});
     try {
-      pos = await Geolocator.getLastKnownPosition();
+      pos = AppConfig.demoLocation ? null : await Geolocator.getLastKnownPosition();
       _evaluate();
       notifyListeners();
     } catch (_) {}

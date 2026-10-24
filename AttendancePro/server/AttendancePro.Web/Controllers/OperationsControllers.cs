@@ -178,7 +178,7 @@ public class LeavesController : AdminController
         var l = await Db.Leaves.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id); if (l is null) return NotFound();
         if (l.Status != RequestStatus.Pending) { Fail("Already reviewed."); return RedirectToAction(nameof(Index)); }
         l.Status = approve ? RequestStatus.Approved : RequestStatus.Rejected;
-        l.ReviewedBy = User.Identity?.Name; l.ReviewedUtc = DateTime.UtcNow; l.ReviewNote = note?.Trim();
+        l.ReviewedBy = User.Identity?.Name; l.ReviewedUtc = Clock.UtcNow; l.ReviewNote = note?.Trim();
         await Db.SaveChangesAsync();
         await Audit.LogAsync("leave." + l.Status.ToString().ToLower(), $"{l.User?.FullName} {l.FromDate:yyyy-MM-dd}→{l.ToDate:yyyy-MM-dd}");
         Success($"Leave {l.Status.ToString().ToLower()}.");
@@ -225,7 +225,7 @@ public class RegularizationsController : AdminController
             rec.Notes = $"Regularized: {r.Reason}";
         }
         r.Status = approve ? RequestStatus.Approved : RequestStatus.Rejected;
-        r.ReviewedBy = User.Identity?.Name; r.ReviewedUtc = DateTime.UtcNow; r.ReviewNote = note?.Trim();
+        r.ReviewedBy = User.Identity?.Name; r.ReviewedUtc = Clock.UtcNow; r.ReviewNote = note?.Trim();
         await Db.SaveChangesAsync();
         await Audit.LogAsync("regularization." + r.Status.ToString().ToLower(), $"{r.User?.FullName} {r.Date:yyyy-MM-dd}");
         Success($"Request {r.Status.ToString().ToLower()}.");

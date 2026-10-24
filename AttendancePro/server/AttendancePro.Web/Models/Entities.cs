@@ -1,3 +1,4 @@
+using AttendancePro.Web.Services;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
@@ -36,7 +37,7 @@ public class Organization
     public bool SendAdminMonthlySummary { get; set; } = true;
     public int? DefaultShiftId { get; set; }
 
-    public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; set; } = Clock.UtcNow;
 
     /// <summary>Wording shown in the UI/app: Employee/Staff vs Student.</summary>
     public string MemberLabel => Type == OrgType.Education ? "Member" : "Employee";
@@ -58,7 +59,7 @@ public class ApplicationUser : IdentityUser
     [StringLength(100)] public string? DeviceId { get; set; }
     [StringLength(100)] public string? DeviceModel { get; set; }
     public bool ReceiveMonthlyReport { get; set; } = true;
-    public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; set; } = Clock.UtcNow;
     public DateTime? LastLoginUtc { get; set; }
     [StringLength(128)] public string? ResetCodeHash { get; set; }
     public DateTime? ResetCodeExpiresUtc { get; set; }
@@ -164,7 +165,7 @@ public class LeaveRequest : ITenantEntity
     public string? ReviewedBy { get; set; }
     public DateTime? ReviewedUtc { get; set; }
     [StringLength(300)] public string? ReviewNote { get; set; }
-    public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; set; } = Clock.UtcNow;
 }
 
 /// <summary>User asks admin to fix a missed punch (forgot to check out, etc.).</summary>
@@ -182,7 +183,7 @@ public class RegularizationRequest : ITenantEntity
     public string? ReviewedBy { get; set; }
     public DateTime? ReviewedUtc { get; set; }
     [StringLength(300)] public string? ReviewNote { get; set; }
-    public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; set; } = Clock.UtcNow;
 }
 
 public class Holiday : ITenantEntity
@@ -197,7 +198,7 @@ public class AuditLog : ITenantEntity
 {
     public long Id { get; set; }
     public int OrganizationId { get; set; }
-    public DateTime AtUtc { get; set; } = DateTime.UtcNow;
+    public DateTime AtUtc { get; set; } = Clock.UtcNow;
     public string? ActorId { get; set; }
     [StringLength(120)] public string? ActorName { get; set; }
     [Required, StringLength(60)] public string Action { get; set; } = "";
@@ -211,9 +212,9 @@ public class RefreshToken
     public string UserId { get; set; } = "";
     [Required, StringLength(128)] public string TokenHash { get; set; } = "";
     public DateTime ExpiresUtc { get; set; }
-    public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; set; } = Clock.UtcNow;
     public DateTime? RevokedUtc { get; set; }
-    public bool IsActive => RevokedUtc is null && ExpiresUtc > DateTime.UtcNow;
+    public bool IsActive => RevokedUtc is null && ExpiresUtc > Clock.UtcNow;
 }
 
 public class ReportLog : ITenantEntity
@@ -223,7 +224,7 @@ public class ReportLog : ITenantEntity
     public string? UserId { get; set; }          // null = admin summary
     public int Year { get; set; }
     public int Month { get; set; }
-    public DateTime SentUtc { get; set; } = DateTime.UtcNow;
+    public DateTime SentUtc { get; set; } = Clock.UtcNow;
     public bool Success { get; set; }
     [StringLength(300)] public string? Error { get; set; }
 }

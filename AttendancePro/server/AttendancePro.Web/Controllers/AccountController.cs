@@ -66,7 +66,7 @@ public class AccountController : Controller
         var res = await _signIn.PasswordSignInAsync(user, vm.Password, vm.RememberMe, lockoutOnFailure: true);
         if (res.IsLockedOut) { ModelState.AddModelError("", "Account locked for 10 minutes after too many attempts."); return View(vm); }
         if (!res.Succeeded) { ModelState.AddModelError("", "Invalid email or password, or this account has no admin access."); return View(vm); }
-        user.LastLoginUtc = DateTime.UtcNow; await _users.UpdateAsync(user);
+        user.LastLoginUtc = Clock.UtcNow; await _users.UpdateAsync(user);
         return Url.IsLocalUrl(returnUrl) ? LocalRedirect(returnUrl) : RedirectToAction("Index", "Dashboard");
     }
 

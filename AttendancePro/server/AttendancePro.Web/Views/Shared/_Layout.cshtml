@@ -10,6 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] — AttendancePro</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
     @await RenderSectionAsync("Head", required: false)
@@ -19,7 +20,7 @@
 {
     <div class="shell">
         <aside class="sidebar" id="sidebar">
-            <div class="brand"><span class="logo">⌖</span> AttendancePro</div>
+            <div class="brand"><img src="~/img/logo.svg" alt="" class="brand-logo" /> AttendancePro</div>
             <div class="org-chip">@org!.Name<small>Join code: <b>@org.Code</b></small></div>
             <nav>
                 <a class="@Active("Dashboard")" asp-controller="Dashboard" asp-action="Index">▦ Dashboard</a>

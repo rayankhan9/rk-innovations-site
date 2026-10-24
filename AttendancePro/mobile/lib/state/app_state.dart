@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+import '../config.dart';
 import '../models.dart';
 import '../services/api.dart';
 import '../services/location_service.dart';
@@ -44,6 +45,7 @@ class AppState extends ChangeNotifier {
       final info = await DeviceInfoPlugin().androidInfo;
       deviceModel = '${info.manufacturer} ${info.model}';
     } catch (_) {}
+    if (AppConfig.demoDevice.isNotEmpty) deviceModel = AppConfig.demoDevice;
 
     if (api.hasSession) {
       try {

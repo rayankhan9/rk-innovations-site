@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Form(
                 key: _form,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  Icon(Icons.my_location, size: 56, color: cs.primary),
+                  Center(child: ClipRRect(borderRadius: BorderRadius.circular(22), child: Image.asset('assets/branding/icon.png', width: 84, height: 84))),
                   const SizedBox(height: 12),
                   Text(AppConfig.appName, textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700)),
                   Text('Sign in to mark your attendance', textAlign: TextAlign.center, style: TextStyle(color: cs.onSurfaceVariant)),
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text('New here? Register with your organization code'),
                   ),
                   const SizedBox(height: 16),
-                  TextButton(onPressed: _server, child: Text('Server: ${context.read<AppState>().api.baseUrl}', style: const TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis)),
+                  TextButton(onPressed: _server, child: const Text('Server settings', style: TextStyle(fontSize: 12))),
                 ]),
               ),
             ),

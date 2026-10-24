@@ -29,7 +29,7 @@ public class SelfieStore
             // Only accept JPEG/PNG magic numbers.
             bool jpeg = bytes[0] == 0xFF && bytes[1] == 0xD8, png = bytes[0] == 0x89 && bytes[1] == 0x50;
             if (!jpeg && !png) return null;
-            var rel = Path.Combine(orgId.ToString(), DateTime.UtcNow.ToString("yyyyMM"), $"{userId[..8]}_{Guid.NewGuid():N}.{(jpeg ? "jpg" : "png")}");
+            var rel = Path.Combine(orgId.ToString(), Clock.UtcNow.ToString("yyyyMM"), $"{userId[..8]}_{Guid.NewGuid():N}.{(jpeg ? "jpg" : "png")}");
             var full = Path.Combine(_root, rel);
             Directory.CreateDirectory(Path.GetDirectoryName(full)!);
             await File.WriteAllBytesAsync(full, bytes);
@@ -89,7 +89,7 @@ public class TokenService
 
     public async Task<TokenPair> IssueAsync(ApplicationUser user)
     {
-        var exp = DateTime.UtcNow.AddMinutes(_opt.AccessMinutes);
+        var exp = Clock.UtcNow.AddMinutes(_opt.AccessMinutes);
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -101,7 +101,7 @@ public class TokenService
         var jwt = new JwtSecurityToken(_opt.Issuer, _opt.Audience, claims, expires: exp, signingCredentials: creds);
 
         var refresh = Convert.ToBase64String(RandomNumberGenerator.GetBytes(48));
-        _db.RefreshTokens.Add(new RefreshToken { UserId = user.Id, TokenHash = Hash(refresh), ExpiresUtc = DateTime.UtcNow.AddDays(_opt.RefreshDays) });
+        _db.RefreshTokens.Add(new RefreshToken { UserId = user.Id, TokenHash = Hash(refresh), ExpiresUtc = Clock.UtcNow.AddDays(_opt.RefreshDays) });
         await _db.SaveChangesAsync();
         return new TokenPair(new JwtSecurityTokenHandler().WriteToken(jwt), refresh, exp);
     }
@@ -114,7 +114,7 @@ public class TokenService
         if (rt is null || !rt.IsActive) return null;
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == rt.UserId);
         if (user is null || user.Status == UserStatus.Disabled) return null;
-        rt.RevokedUtc = DateTime.UtcNow;
+        rt.RevokedUtc = Clock.UtcNow;
         await _db.SaveChangesAsync();
         return (user, await IssueAsync(user));
     }
@@ -123,13 +123,13 @@ public class TokenService
     {
         var h = Hash(refresh);
         var rt = await _db.RefreshTokens.FirstOrDefaultAsync(r => r.TokenHash == h);
-        if (rt != null) { rt.RevokedUtc = DateTime.UtcNow; await _db.SaveChangesAsync(); }
+        if (rt != null) { rt.RevokedUtc = Clock.UtcNow; await _db.SaveChangesAsync(); }
     }
 
     public async Task RevokeAllAsync(string userId)
     {
         foreach (var t in await _db.RefreshTokens.Where(r => r.UserId == userId && r.RevokedUtc == null).ToListAsync())
-            t.RevokedUtc = DateTime.UtcNow;
+            t.RevokedUtc = Clock.UtcNow;
         await _db.SaveChangesAsync();
     }
 
@@ -166,7 +166,7 @@ public class SmtpMailSender : IMailSender
             var dir = Path.Combine(_env.ContentRootPath, "App_Data", "outbox");
             Directory.CreateDirectory(dir);
             var safe = new string(to.Where(char.IsLetterOrDigit).ToArray());
-            await File.WriteAllTextAsync(Path.Combine(dir, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{safe}.html"),
+            await File.WriteAllTextAsync(Path.Combine(dir, $"{Clock.UtcNow:yyyyMMdd_HHmmss}_{safe}.html"),
                 $"<!-- To: {to} | Subject: {subject} -->\n{html}", ct);
             _log.LogWarning("SMTP not configured; email to {To} saved to App_Data/outbox", to);
             return;
