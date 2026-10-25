@@ -71,7 +71,7 @@ flutter build apk --release --dart-define=API_BASE_URL=https://attendance.yourco
 ```
 
 - `API_BASE_URL` / `APP_NAME` are compile-time defaults, so a company can ship its own build. Users can also change the server on the sign-in screen.
-- Before publishing to Google Play: change the application id (`android/app/build.gradle.kts`), add your own launcher icon, create a release keystore (`android/key.properties`) and a privacy policy that states location is collected only when signing in/out and while the Today screen is open.
+- Before publishing to Google Play: change the application id (`android/app/build.gradle.kts`), add your own launcher icon, create a release keystore (`android/key.properties`) and a privacy policy (a draft is at `/attendance-pro/privacy.html` in the site repo) that states location is read only while the app is open and recorded when signing in/out.
 - Debug builds allow cleartext HTTP (for the emulator); release builds do not.
 
 ## API overview (`/api/v1`, JSON, Bearer JWT)

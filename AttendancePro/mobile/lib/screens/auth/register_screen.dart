@@ -123,7 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controlAffinity: ListTileControlAffinity.leading,
                 value: _agree,
                 onChanged: (v) => setState(() => _agree = v ?? false),
-                title: const Text('I understand my location is checked only when I sign in or out, and shared with my organization\'s administrators.', style: TextStyle(fontSize: 13)),
+                title: const Text('I understand my location is used while the app is open and recorded when I sign in or out, and shared with my organization\'s administrators.', style: TextStyle(fontSize: 13)),
               ),
               const SizedBox(height: 8),
               FilledButton(onPressed: (_busy || !_agree) ? null : _submit, child: _busy ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Register')),

@@ -31,7 +31,7 @@ Your administrator draws the allowed area on a map; you can sign in and out only
 • Leave requests and attendance-correction requests with approvals
 • Works through poor signal: punches are saved and synced automatically
 • Monthly attendance report emailed to you automatically
-• Privacy-first: location is read only when the Today screen is open or when you sign in/out, and is shared only with your organization
+• Privacy-first: location is read only while the app is open and when you sign in/out (never in the background), and is shared only with your organization
 
 Join with the organization code from your administrator. (Administrators manage everything from the AttendancePro web portal.)
 

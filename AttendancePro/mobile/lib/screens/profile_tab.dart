@@ -73,7 +73,7 @@ class ProfileTab extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
             title: const Text('Privacy'),
-            subtitle: const Text('Your location is read only when this screen is open or when you sign in/out. It is shared with your organization\'s administrators and never sold.'),
+            subtitle: const Text('Your location is read only while the app is open and when you sign in or out, never in the background. Sign-in and sign-out locations are shared with your organization\'s administrators and never sold.'),
           ),
           ListTile(
             leading: Icon(Icons.logout, color: cs.error),
