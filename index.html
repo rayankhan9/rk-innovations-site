@@ -3,130 +3,447 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RK Innovations</title>
+<title>RK Innovations — focused, well-made software</title>
 <meta name="description" content="RK Innovations builds focused software: exam prep for students (ExamAce, CompetePrep) and geofenced attendance for organizations (AttendancePro).">
+<meta property="og:title" content="RK Innovations — focused, well-made software">
+<meta property="og:description" content="Apps for students and organizations: ExamAce, CompetePrep and AttendancePro.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rk-innovations.in/">
+<meta name="theme-color" content="#4F46E5">
+<link rel="icon" href="/assets/rk-mark.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --indigo: #4F46E5;
     --indigo-ink: #3730A3;
     --violet: #6D28D9;
     --gold: #FBBF24;
-    --bg: #F3F1EC;
+    --bg: #F6F4EE;
     --surface: #FFFFFF;
+    --surface-2: #FBFAF6;
     --text: #1F1B3A;
     --text-soft: #5B577A;
     --text-faint: #8B87A6;
     --border: #E2DFD4;
+    --shadow: 250 30% 18%;
+    --glow-a: rgba(79, 70, 229, .22);
+    --glow-b: rgba(251, 191, 36, .22);
+    --glow-c: rgba(13, 148, 136, .16);
+    --chip-bg: rgba(31, 27, 58, .05);
+    --nav-bg: rgba(246, 244, 238, .78);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #14121F; --surface: #1E1A2E; --text: #EFEDFA;
-      --text-soft: #B6B1D6; --text-faint: #8983AD; --border: #322C49;
+      --bg: #12101D;
+      --surface: #1C182C;
+      --surface-2: #17142A;
+      --text: #EFEDFA;
+      --text-soft: #B6B1D6;
+      --text-faint: #8983AD;
+      --border: #332D4B;
+      --shadow: 250 60% 2%;
+      --glow-a: rgba(99, 102, 241, .30);
+      --glow-b: rgba(251, 191, 36, .13);
+      --glow-c: rgba(45, 212, 191, .16);
+      --chip-bg: rgba(239, 237, 250, .07);
+      --nav-bg: rgba(18, 16, 29, .72);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #14121F; --surface: #1E1A2E; --text: #EFEDFA;
-    --text-soft: #B6B1D6; --text-faint: #8983AD; --border: #322C49;
+    --bg: #12101D;
+    --surface: #1C182C;
+    --surface-2: #17142A;
+    --text: #EFEDFA;
+    --text-soft: #B6B1D6;
+    --text-faint: #8983AD;
+    --border: #332D4B;
+    --shadow: 250 60% 2%;
+    --glow-a: rgba(99, 102, 241, .30);
+    --glow-b: rgba(251, 191, 36, .13);
+    --glow-c: rgba(45, 212, 191, .16);
+    --chip-bg: rgba(239, 237, 250, .07);
+    --nav-bg: rgba(18, 16, 29, .72);
   }
+
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     background: var(--bg);
     color: var(--text);
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    display: flex;
-    flex-direction: column;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 48px 24px;
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  .wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--nav-bg);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
   }
-  h1 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: clamp(30px, 5vw, 44px); margin: 0; text-wrap: balance; }
-  p.tagline { color: var(--text-soft); font-size: 17px; margin: 14px 0 0; max-width: 44ch; }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
+  .brand img { width: 34px; height: 34px; border-radius: 10px; background: #fff; padding: 3px; box-shadow: 0 1px 0 var(--border); }
+  .nav-links { display: flex; align-items: center; gap: 6px; font-size: 14.5px; font-weight: 500; }
+  .nav-links a { padding: 8px 14px; border-radius: 999px; color: var(--text-soft); transition: color .15s, background .15s; }
+  .nav-links a:hover { color: var(--text); background: var(--chip-bg); }
+  .nav-links a.cta { color: #fff; background: linear-gradient(135deg, var(--indigo), var(--violet)); }
+  .nav-links a.cta:hover { filter: brightness(1.08); color: #fff; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; padding: 88px 0 56px; text-align: center; isolation: isolate; }
+  .aurora { position: absolute; inset: -60px 0 0; z-index: -1; overflow: hidden; pointer-events: none;
+    -webkit-mask-image: linear-gradient(#000 60%, transparent); mask-image: linear-gradient(#000 60%, transparent); }
+  .aurora i { position: absolute; border-radius: 50%; filter: blur(70px); }
+  .aurora i:nth-child(1) { width: 520px; height: 520px; left: calc(50% - 560px); top: -120px; background: var(--glow-a); animation: drift 18s ease-in-out infinite alternate; }
+  .aurora i:nth-child(2) { width: 460px; height: 460px; left: calc(50% + 120px); top: -60px; background: var(--glow-b); animation: drift 22s ease-in-out infinite alternate-reverse; }
+  .aurora i:nth-child(3) { width: 380px; height: 380px; left: calc(50% - 190px); top: 120px; background: var(--glow-c); animation: drift 26s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(40px, 30px, 0) scale(1.12); } }
   .mark {
-    width: 76px; height: 76px; border-radius: 18px;
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 22px;
-    box-shadow: 0 12px 28px -14px rgba(31, 27, 58, 0.35);
+    width: 84px; height: 84px; margin: 0 auto 28px; border-radius: 24px; background: #fff;
+    display: grid; place-items: center;
+    box-shadow: 0 18px 40px -14px hsl(var(--shadow) / .35), 0 0 0 1px var(--border);
   }
-  .mark img { width: 56px; height: auto; }
-  .product-card {
-    margin-top: 44px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 22px;
-    text-decoration: none;
-    color: var(--text);
-    max-width: 420px;
-    width: 100%;
-    box-shadow: 0 18px 40px -22px rgba(31, 27, 58, 0.25);
-    transition: transform .15s ease;
+  .mark img { width: 60px; height: 60px; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: var(--text-soft); margin-bottom: 22px;
   }
-  .product-card:hover { transform: translateY(-2px); }
-  .product-icon {
-    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    display: block;
+  .kicker b { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+  h1 {
+    font-family: 'Poppins', sans-serif; font-weight: 800; letter-spacing: -.03em; line-height: 1.04;
+    font-size: clamp(40px, 7vw, 72px); margin: 0 auto 20px; max-width: 17ch; text-wrap: balance;
   }
-  .product-info { text-align: left; }
-  .product-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 16px; }
-  .product-desc { font-size: 13px; color: var(--text-soft); margin-top: 2px; }
-  .product-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, transparent); padding: 3px 9px; border-radius: 999px; margin-left: auto; white-space: nowrap; }
-  footer { padding: 22px; text-align: center; font-size: 12.5px; color: var(--text-faint); }
-  :focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(120deg, var(--indigo) 0%, var(--violet) 45%, #DB2777 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tagline { max-width: 560px; margin: 0 auto; font-size: clamp(16px, 2vw, 19px); color: var(--text-soft); }
+  .hero-stats { display: flex; justify-content: center; gap: clamp(22px, 5vw, 56px); margin-top: 38px; flex-wrap: wrap; }
+  .hero-stats div { text-align: center; }
+  .hero-stats strong { display: block; font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 700; line-height: 1.1; }
+  .hero-stats span { font-size: 12.5px; color: var(--text-faint); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+
+  /* ---------- apps ---------- */
+  .apps { padding: 24px 0 88px; }
+  .apps-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .apps-head h2 { font-family: 'Poppins', sans-serif; font-size: clamp(26px, 3.4vw, 36px); letter-spacing: -.02em; margin: 0 0 4px; }
+  .apps-head p { margin: 0; color: var(--text-soft); }
+  .filters { display: none; gap: 6px; padding: 5px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); }
+  .js .filters { display: inline-flex; }
+  .filters button {
+    font: inherit; font-size: 13.5px; font-weight: 600; color: var(--text-soft);
+    background: none; border: 0; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: all .15s;
+  }
+  .filters button:hover { color: var(--text); }
+  .filters button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+
+  .card {
+    --accent: var(--indigo);
+    --accent-2: var(--violet);
+    position: relative; display: flex; flex-direction: column;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 26px;
+    padding: 28px; overflow: hidden; isolation: isolate;
+    box-shadow: 0 1px 0 rgba(255,255,255,.4) inset, 0 20px 40px -28px hsl(var(--shadow) / .35);
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .25s;
+  }
+  .card::before {            /* accent wash behind the icon */
+    content: ""; position: absolute; z-index: -1; width: 280px; height: 280px; top: -140px; right: -90px; border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 34%, transparent), transparent);
+    transition: transform .4s ease;
+  }
+  .card::after {             /* accent edge on hover */
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; z-index: -1;
+    background: linear-gradient(140deg, var(--accent), transparent 55%, var(--accent-2));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: 0; transition: opacity .25s;
+  }
+  .card:hover, .card:focus-within { transform: translateY(-6px); box-shadow: 0 34px 60px -30px hsl(var(--shadow) / .5); }
+  .card:hover::before { transform: scale(1.25); }
+  .card:hover::after, .card:focus-within::after { opacity: 1; }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+  .card-icon {
+    width: 68px; height: 68px; border-radius: 19px; object-fit: cover;
+    box-shadow: 0 12px 24px -10px color-mix(in srgb, var(--accent) 70%, #000), 0 0 0 1px rgba(0,0,0,.06);
+  }
+  .status {
+    display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--text-soft);
+  }
+  .status i { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
+  .status.custom i { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .category { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  .card h3 { font-family: 'Poppins', sans-serif; font-size: 27px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; margin: 0 0 4px; }
+  .card h3 a::after { content: ""; position: absolute; inset: 0; z-index: 1; }   /* whole card clickable */
+  .card .hook { margin: 0 0 14px; font-weight: 600; color: var(--text); font-size: 15.5px; }
+  .card .desc { margin: 0 0 20px; color: var(--text-soft); font-size: 15px; }
+  .chips { list-style: none; padding: 0; margin: 0 0 26px; display: flex; flex-wrap: wrap; gap: 7px; }
+  .chips li { padding: 5px 11px; border-radius: 999px; background: var(--chip-bg); font-size: 12.5px; font-weight: 600; color: var(--text-soft); }
+  .card-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; border-top: 1px dashed var(--border); }
+  .facts { font-size: 12.5px; color: var(--text-faint); font-weight: 500; line-height: 1.35; }
+  .go {
+    position: relative; z-index: 2; flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 10px 20px -10px var(--accent); transition: transform .2s, filter .2s;
+  }
+  .go svg { transition: transform .2s; }
+  .go:hover { filter: brightness(1.08); }
+  .card:hover .go svg { transform: translateX(3px); }
+  .card.is-hidden { display: none; }
+
+  .card[data-app="examace"]       { --accent: #2563EB; --accent-2: #1D4ED8; }
+  .card[data-app="competeprep"]   { --accent: #5B54E8; --accent-2: #7C3AED; }
+  .card[data-app="attendancepro"] { --accent: #0D9488; --accent-2: #0F766E; }
+
+  /* "more coming" placeholder — also the template for the next app */
+  .soon-card {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: center; gap: 18px 22px; flex-wrap: wrap; text-align: left;
+    padding: 24px 28px; border-radius: 26px; border: 2px dashed var(--border); color: var(--text-soft);
+  }
+  .soon-card .plus { width: 52px; height: 52px; flex-shrink: 0; border-radius: 16px; display: grid; place-items: center; background: var(--chip-bg); font-size: 28px; font-weight: 300; color: var(--text-faint); }
+  .soon-card .txt { flex: 0 1 460px; }
+  .soon-card h3 { margin: 0 0 2px; font-family: 'Poppins', sans-serif; font-size: 19px; color: var(--text); }
+  .soon-card p { margin: 0; font-size: 14.5px; }
+  .soon-card a { font-weight: 700; color: var(--indigo); font-size: 14px; }
+  :root[data-theme="dark"] .soon-card a { color: #A5B4FC; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .soon-card a { color: #A5B4FC; } }
+
+  /* ---------- about / contact ---------- */
+  .about { padding: 0 0 88px; }
+  .about-box {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center;
+    padding: clamp(28px, 5vw, 56px); border-radius: 32px; color: #fff; position: relative; overflow: hidden; isolation: isolate;
+    background: linear-gradient(135deg, #312E81 0%, #4F46E5 55%, #7C3AED 100%);
+  }
+  .about-box::before { content: ""; position: absolute; z-index: -1; width: 420px; height: 420px; right: -120px; top: -160px; border-radius: 50%; background: radial-gradient(closest-side, rgba(251,191,36,.45), transparent); }
+  .about-box h2 { font-family: 'Poppins', sans-serif; font-size: clamp(26px, 3.4vw, 38px); letter-spacing: -.02em; line-height: 1.12; margin: 0 0 14px; }
+  .about-box p { margin: 0; color: rgba(255,255,255,.82); font-size: 16px; max-width: 52ch; }
+  .principles { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .principles li { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16); font-size: 14.5px; }
+  .principles b { display: block; font-family: 'Poppins', sans-serif; font-size: 15px; }
+  .principles span.ic { font-size: 20px; line-height: 1.3; }
+  .contact-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .btn { display: inline-flex; align-items: center; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14.5px; transition: transform .2s, background .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-light { background: #fff; color: #3730A3; }
+  .btn-line { border: 1.5px solid rgba(255,255,255,.55); color: #fff; }
+  .btn-line:hover { background: rgba(255,255,255,.12); }
+
+  footer { padding: 0 0 44px; color: var(--text-faint); font-size: 13.5px; }
+  .foot-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 26px; border-top: 1px solid var(--border); }
+  .foot-row nav { display: flex; gap: 20px; flex-wrap: wrap; }
+  .foot-row a:hover { color: var(--text); }
+
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 8px; }
+
+  /* entrance */
+  @media (prefers-reduced-motion: no-preference) {
+    .rise { opacity: 0; transform: translateY(18px); animation: rise .7s cubic-bezier(.2,.8,.2,1) forwards; }
+    .rise.d1 { animation-delay: .08s; } .rise.d2 { animation-delay: .16s; } .rise.d3 { animation-delay: .24s; } .rise.d4 { animation-delay: .32s; }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+
+  @media (max-width: 860px) { .about-box { grid-template-columns: 1fr; gap: 28px; } }
+  @media (max-width: 640px) {
+    .hero { padding: 56px 0 40px; }
+    .nav-links a:not(.cta) { display: none; }
+    .grid { grid-template-columns: 1fr; }
+    .card { padding: 24px; }
+    .card-foot { flex-direction: column; align-items: stretch; }
+    .go { justify-content: center; }
+    .aurora i:nth-child(1) { left: -200px; } .aurora i:nth-child(2) { left: auto; right: -200px; }
+  }
 </style>
 </head>
 <body>
-  <main>
-    <div class="mark">
-      <img src="/assets/rk-mark.png" alt="RK Innovations">
+
+<header class="nav">
+  <div class="wrap nav-row">
+    <a class="brand" href="/"><img src="/assets/rk-mark.png" alt="" width="34" height="34"><span>RK Innovations</span></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#apps">Apps</a>
+      <a href="#about">About</a>
+      <a class="cta" href="mailto:info@rk-innovations.in">Get in touch</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="wrap">
+      <div class="mark rise"><img src="/assets/rk-mark.png" alt="RK Innovations logo" width="60" height="60"></div>
+      <div class="kicker rise d1"><b></b> An independent studio</div>
+      <h1 class="rise d2">Software that does <em>one thing</em> well.</h1>
+      <p class="tagline rise d3">We design and build focused apps — exam prep for students, attendance for organizations — with no clutter and nothing you didn't ask for.</p>
+      <div class="hero-stats rise d4">
+        <div><strong>3</strong><span>Apps</span></div>
+        <div><strong>2</strong><span>Live on Google Play</span></div>
+      </div>
     </div>
-    <h1>RK Innovations</h1>
-    <p class="tagline">A small studio building focused, well-made software — exam prep for students, attendance for organizations.</p>
+  </section>
 
-    <a class="product-card" href="/examace/">
-      <img class="product-icon" src="/assets/examace-icon.png" alt="">
+  <section class="apps" id="apps">
+    <div class="wrap">
+      <div class="apps-head">
+        <div>
+          <h2>Our apps</h2>
+          <p>Pick one to see what it does and how to get it.</p>
+        </div>
+        <div class="filters" role="group" aria-label="Filter apps">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" data-filter="students" aria-pressed="false">For students</button>
+          <button type="button" data-filter="organizations" aria-pressed="false">For organizations</button>
+        </div>
+      </div>
 
-      <span class="product-info">
-        <span class="product-name">ExamAce</span>
-        <span class="product-desc">AI-graded CBSE practice for Classes 8–12</span>
-      </span>
-      <span class="product-eyebrow">Explore</span>
-    </a>
+      <div class="grid" id="grid">
+        <!--
+          ADD A NEW APP: copy any <article class="card"> below, change data-app / data-category,
+          the icon, text and link, and add one CSS line for its colours:
+          .card[data-app="yourapp"] { --accent: #hex; --accent-2: #hex; }
+        -->
 
-    <a class="product-card" href="/CompetePrep/">
-      <img class="product-icon" src="/assets/competeprep-icon.png" alt="">
+        <article class="card" data-app="examace" data-category="students">
+          <div class="card-top">
+            <img class="card-icon" src="/assets/examace-icon.png" alt="" width="68" height="68">
+            <span class="status"><i></i>Live on Google Play</span>
+          </div>
+          <p class="category">CBSE · Classes 8–12</p>
+          <h3><a href="/examace/">ExamAce</a></h3>
+          <p class="hook">AI-graded practice for CBSE students.</p>
+          <p class="desc">Write answers like you would in the exam and get marked against the real marking scheme, with a model answer every time.</p>
+          <ul class="chips">
+            <li>AI grading</li><li>Model answers</li><li>Topic mastery</li><li>NCERT-sourced</li>
+          </ul>
+          <div class="card-foot">
+            <span class="facts">Android · Free daily practice</span>
+            <a class="go" href="/examace/">Explore
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </article>
 
-      <span class="product-info">
-        <span class="product-name">CompetePrep</span>
-        <span class="product-desc">Real past papers for JEE, NEET, GATE &amp; CLAT</span>
-      </span>
-      <span class="product-eyebrow">Explore</span>
-    </a>
+        <article class="card" data-app="competeprep" data-category="students">
+          <div class="card-top">
+            <img class="card-icon" src="/assets/competeprep-icon.png" alt="" width="68" height="68">
+            <span class="status"><i></i>Live on Google Play</span>
+          </div>
+          <p class="category">JEE · NEET · GATE · CLAT</p>
+          <h3><a href="/CompetePrep/">CompetePrep</a></h3>
+          <p class="hook">Real past-paper questions, verified answers.</p>
+          <p class="desc">Practise topic by topic or sit a full mock. Every answer is checked against the official key, and everything works offline.</p>
+          <ul class="chips">
+            <li>Full mock tests</li><li>Official answer keys</li><li>Works offline</li><li>Free</li>
+          </ul>
+          <div class="card-foot">
+            <span class="facts">Android · No account, no tracking</span>
+            <a class="go" href="/CompetePrep/">Explore
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </article>
 
-    <a class="product-card" href="/attendance-pro/">
-      <img class="product-icon" src="/assets/attendancepro-icon.png" alt="">
+        <article class="card" data-app="attendancepro" data-category="organizations">
+          <div class="card-top">
+            <img class="card-icon" src="/assets/attendancepro-icon.png" alt="" width="68" height="68">
+            <span class="status custom"><i></i>Custom builds</span>
+          </div>
+          <p class="category">Companies · Schools · Campuses</p>
+          <h3><a href="/attendance-pro/">AttendancePro</a></h3>
+          <p class="hook">Attendance that only counts where it should.</p>
+          <p class="desc">People sign in and out only inside the areas you draw on a map. The server verifies every punch, and monthly reports send themselves.</p>
+          <ul class="chips">
+            <li>Geofencing</li><li>Admin web portal</li><li>Auto reports</li><li>Your own server</li>
+          </ul>
+          <div class="card-foot">
+            <span class="facts">Android + web portal · Your data stays with you</span>
+            <a class="go" href="/attendance-pro/">Request a demo
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </article>
 
-      <span class="product-info">
-        <span class="product-name">AttendancePro</span>
-        <span class="product-desc">Geofenced attendance for teams &amp; campuses</span>
-      </span>
-      <span class="product-eyebrow">Explore</span>
-    </a>
-  </main>
-  <footer>© 2026 RK Innovations</footer>
+        <div class="soon-card" id="more">
+          <div class="plus" aria-hidden="true">+</div>
+          <div class="txt">
+            <h3>More on the way</h3>
+            <p>New apps land here as they're ready. Have an idea or a need?</p>
+          </div>
+          <a href="mailto:info@rk-innovations.in?subject=App%20idea">Tell us about it →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="wrap">
+      <div class="about-box">
+        <div>
+          <h2>Small team. Careful work.</h2>
+          <p>RK Innovations is an independent studio. We'd rather build one app that's accurate, fast and respectful of your data than ten that aren't. Need something built around your own organization? We customize our apps to fit, and publish them under your name.</p>
+          <div class="contact-row">
+            <a class="btn btn-light" href="mailto:info@rk-innovations.in">info@rk-innovations.in</a>
+            <a class="btn btn-line" href="#apps">Browse the apps</a>
+          </div>
+        </div>
+        <ul class="principles">
+          <li><span class="ic" aria-hidden="true">🎯</span><div><b>Focused</b>Each app has one clear job.</div></li>
+          <li><span class="ic" aria-hidden="true">✅</span><div><b>Accurate</b>We verify content and say plainly what's what.</div></li>
+          <li><span class="ic" aria-hidden="true">🔒</span><div><b>Private by design</b>Minimal data, clear policies, no surprises.</div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <span>© 2026 RK Innovations</span>
+    <nav aria-label="Footer">
+      <a href="/examace/privacy.html">ExamAce privacy</a>
+      <a href="/CompetePrep/privacy.html">CompetePrep privacy</a>
+      <a href="/attendance-pro/privacy.html">AttendancePro privacy</a>
+      <a href="mailto:info@rk-innovations.in">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Progressive enhancement: the filter bar only appears when JS runs; without it every card shows.
+  document.documentElement.classList.add('js');
+  (function () {
+    var buttons = document.querySelectorAll('.filters button');
+    var cards = document.querySelectorAll('.card');
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var f = b.getAttribute('data-filter');
+        buttons.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+        cards.forEach(function (c) {
+          c.classList.toggle('is-hidden', f !== 'all' && c.getAttribute('data-category') !== f);
+        });
+      });
+    });
+  })();
+</script>
 </body>
 </html>
