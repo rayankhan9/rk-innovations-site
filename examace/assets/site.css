@@ -509,3 +509,5 @@ footer { padding: 48px 0 40px; }
 
 :focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.nav-links .home-link { white-space: nowrap; }
+@media (max-width: 520px) { .nav-links { gap: 12px; } .nav-links .home-link span { display: none; } .nav-links .home-link { font-size: 18px; } .nav .brand-name, .nav .brand-super { display: none; } }

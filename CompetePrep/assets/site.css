@@ -543,3 +543,5 @@ footer { padding: 48px 0 40px; }
 }
 .free-band h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
 .free-band p { color: var(--text-soft); font-size: 14.5px; margin: 0; max-width: 48ch; }
+.nav-links .home-link { white-space: nowrap; }
+@media (max-width: 520px) { .nav-links { gap: 12px; } .nav-links .home-link span { display: none; } .nav-links .home-link { font-size: 18px; } .nav .brand-name, .nav .brand-super { display: none; } }
